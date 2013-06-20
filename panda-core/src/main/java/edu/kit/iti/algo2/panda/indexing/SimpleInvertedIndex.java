@@ -1,28 +1,26 @@
 package edu.kit.iti.algo2.panda.indexing;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SimpleInvertedIndex implements DocumentIndex {
 	private static final int minimumWordLength = 2;
 	
-	private HashMap<String, ArrayList<Integer>> invertedIndex;
+	private HashMap<String, DocumentList> invertedIndex;
 	private int documentCount;
 	
 	public SimpleInvertedIndex() {
-		this.invertedIndex = new HashMap<String, ArrayList<Integer>>();
+		this.invertedIndex = new HashMap<String, DocumentList>();
 		this.documentCount = 0;
 	}
 
 	public void addDocument(Document document) {
 		char[] content = document.getContent().toCharArray();
-		int contentLength = document.getContent().length();
 		
 		int pos = 0;
-		while(pos < contentLength) {
-			while(pos < contentLength && !Character.isAlphabetic(content[pos])) pos++;
+		while(pos < content.length) {
+			while(pos < content.length && !Character.isAlphabetic(content[pos])) pos++;
 			int wordBegin = pos;
-			while(pos < contentLength && Character.isAlphabetic(content[pos])) pos++;
+			while(pos < content.length && Character.isAlphabetic(content[pos])) pos++;
 			int wordEnd = pos;
 			
 			int wordLength = wordEnd - wordBegin;
@@ -35,9 +33,9 @@ public class SimpleInvertedIndex implements DocumentIndex {
 	}
 	
 	private void addToIndex(String word, int documentNumber) {
-		ArrayList<Integer> list = invertedIndex.get(word);
+		DocumentList list = invertedIndex.get(word);
 		if(list == null) {
-			list = new ArrayList<Integer>();
+			list = new DocumentList();
 			invertedIndex.put(word, list);
 		}
 		list.add(documentNumber);
@@ -48,7 +46,7 @@ public class SimpleInvertedIndex implements DocumentIndex {
 	}
 	
 	@Override
-	public ArrayList<Integer> queryWord(String word) {
+	public DocumentList queryWord(String word) {
 		return invertedIndex.get(normalizeWord(word));
 	}
 

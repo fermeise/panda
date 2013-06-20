@@ -28,7 +28,7 @@ public class TestInvertedIndex {
 		QueryProcessor queryProcessor = new QueryProcessor(documents);
 		
 		List<Integer> query = queryProcessor.queryTwoWords("Schrödinger", "cat");
-		assertEquals(12, query.size());
+		assertEquals(11, query.size());
 		for(Integer documentId: query) {
 			System.out.println(entries.get(documentId));
 		}

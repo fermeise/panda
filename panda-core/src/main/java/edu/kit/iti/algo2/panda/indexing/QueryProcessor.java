@@ -11,7 +11,8 @@ public class QueryProcessor {
 	}
 	
 	public List<Integer> queryTwoWords(String wordA, String wordB) {
-		return intersect(index.queryWord(wordA), index.queryWord(wordB));
+		//return intersect(index.queryWord(wordA).asList(), index.queryWord(wordB).asList());
+		return DocumentList.intersect(index.queryWord(wordA), index.queryWord(wordB)).asList();
 	}
 	
 	public List<Integer> intersect(List<Integer> listA, List<Integer> listB) {
