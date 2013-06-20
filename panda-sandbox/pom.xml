@@ -2,19 +2,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.kit.iti.algo2.panda</groupId>
     <artifactId>panda-sandbox</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build> 
+    
+    <parent>
+    	<groupId>edu.kit.iti.algo2</groupId>
+    	<artifactId>panda</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<relativePath>../pom.xml</relativePath>
+    </parent>
 </project>
