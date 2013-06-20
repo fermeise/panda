@@ -1,15 +1,16 @@
 package edu.kit.iti.algo2.panda.indexing;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
-public class SimpleInvertedIndex implements DocumentIndex {
+public class InvertedIndex implements DocumentIndex {
 	private static final int minimumWordLength = 2;
 	
-	private HashMap<String, DocumentList> invertedIndex;
+	private HashMap<String, InvertedList> invertedIndex;
 	private int documentCount;
 	
-	public SimpleInvertedIndex() {
-		this.invertedIndex = new HashMap<String, DocumentList>();
+	public InvertedIndex() {
+		this.invertedIndex = new HashMap<String, InvertedList>();
 		this.documentCount = 0;
 	}
 
@@ -33,9 +34,9 @@ public class SimpleInvertedIndex implements DocumentIndex {
 	}
 	
 	private void addToIndex(String word, int documentNumber) {
-		DocumentList list = invertedIndex.get(word);
+		InvertedList list = invertedIndex.get(word);
 		if(list == null) {
-			list = new DocumentList();
+			list = new InvertedList();
 			invertedIndex.put(word, list);
 		}
 		list.add(documentNumber);
@@ -46,10 +47,17 @@ public class SimpleInvertedIndex implements DocumentIndex {
 	}
 	
 	@Override
-	public DocumentList queryWord(String word) {
-		DocumentList documents = invertedIndex.get(normalizeWord(word));
+	public void finish() {
+		for(Entry<String, InvertedList> entry: invertedIndex.entrySet()) {
+			entry.getValue().score(documentCount);
+		}
+	}
+	
+	@Override
+	public InvertedList queryWord(String word) {
+		InvertedList documents = invertedIndex.get(normalizeWord(word));
 		if(documents == null) {
-			documents = new DocumentList();
+			documents = new InvertedList();
 		}
 		return documents;
 	}

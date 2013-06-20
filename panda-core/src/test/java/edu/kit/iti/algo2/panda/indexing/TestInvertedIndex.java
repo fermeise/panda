@@ -6,31 +6,31 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class TestInvertedIndex {
-	ArrayList<WikipediaEntry> entries;
-	
-	@Before
-	public void setUp() throws IOException {
-		entries = WikipediaEntry.loadSentences();
-	}
 	
 	@Test
-	public void test() {
-		SimpleInvertedIndex documents = new SimpleInvertedIndex();
+	public void testSimpleInvertedIndex() throws IOException {
+		ArrayList<WikipediaArticle> entries = WikipediaArticle.loadArticles();
 		
-		for(WikipediaEntry entry: entries) {
+		InvertedIndex documents = new InvertedIndex();
+		for(WikipediaArticle entry: entries) {
 			documents.addDocument(entry);
 		}
+		documents.finish();
 		
 		QueryProcessor queryProcessor = new QueryProcessor(documents);
-		
 		List<Integer> query = queryProcessor.query("Schrödinger cat");
-		assertEquals(11, query.size());
 		for(Integer documentId: query) {
-			System.out.println(entries.get(documentId));
+			System.out.println(entries.get(documentId).getTitle());
+		}
+		assertEquals(8, query.size());
+		System.out.println("");
+		
+		query = queryProcessor.query("relativity theory");
+		for(Integer documentId: query) {
+			System.out.println(entries.get(documentId).getTitle());
 		}
 	}
 }

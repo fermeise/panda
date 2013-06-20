@@ -18,9 +18,9 @@ public class QueryProcessor {
 			scanner.close();
 			return new ArrayList<Integer>();
 		}
-		DocumentList query = index.queryWord(scanner.next());
+		InvertedList query = index.queryWord(scanner.next());
 		while(scanner.hasNext()) {
-			query = DocumentList.intersect(query, index.queryWord(scanner.next()));
+			query = InvertedList.intersect(query, index.queryWord(scanner.next()));
 		}
 		scanner.close();
 		return query.asList();
