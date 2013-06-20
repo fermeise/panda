@@ -1,6 +1,9 @@
 package edu.kit.iti.algo2.panda.indexing;
 
+import java.io.File;
+
 public interface Document {
-	public String getURI();
+	public File getFile();
+	public String getTitle();
 	public String getContent();
 }

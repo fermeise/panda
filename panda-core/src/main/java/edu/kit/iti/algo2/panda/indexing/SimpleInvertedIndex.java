@@ -47,7 +47,11 @@ public class SimpleInvertedIndex implements DocumentIndex {
 	
 	@Override
 	public DocumentList queryWord(String word) {
-		return invertedIndex.get(normalizeWord(word));
+		DocumentList documents = invertedIndex.get(normalizeWord(word));
+		if(documents == null) {
+			documents = new DocumentList();
+		}
+		return documents;
 	}
 
 	@Override

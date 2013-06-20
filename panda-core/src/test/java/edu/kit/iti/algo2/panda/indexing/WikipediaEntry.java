@@ -1,22 +1,29 @@
 package edu.kit.iti.algo2.panda.indexing;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class WikipediaEntry implements Document {
 	private static final String sentenceFile = "wikipedia-sentences.csv";
-	private String location;
+	private String article;
 	private String content;
 	
-	public WikipediaEntry(String location, String content) {
-		this.location = location;
+	public WikipediaEntry(String article, String content) {
+		this.article = article;
 		this.content = content;
 	}
 	
-	public String getURI() {
-		return location;
+	@Override
+	public File getFile() {
+		return new File(sentenceFile);
+	}
+	
+	@Override
+	public String getTitle() {
+		return article;
 	}
 
 	@Override
@@ -40,7 +47,6 @@ public class WikipediaEntry implements Document {
 	}
 	
 	public String toString() {
-		return location + "\t" + content;
+		return article + "\t" + content;
 	}
-
 }
