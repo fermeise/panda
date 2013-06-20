@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import edu.kit.iti.algo2.panda.indexing.DocumentIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
-import edu.kit.iti.algo2.panda.indexing.SimpleInvertedIndex;
+import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
 
 public class CrawlerTest {
 	
@@ -25,7 +25,7 @@ public class CrawlerTest {
 	@Test
 	public void test() throws IOException {
 		Logger.getGlobal().setLevel(Level.ALL);
-		DocumentIndex index = new SimpleInvertedIndex();
+		DocumentIndex index = new InvertedIndex();
 		FilesystemCrawler crawler = new FilesystemCrawler(index);
 		crawler.crawl(SEARCH_DIR);
 		QueryProcessor processor = new QueryProcessor(index);
@@ -34,7 +34,7 @@ public class CrawlerTest {
 		List<Path> actual = crawler.getDocuments(queryResult);
 		System.out.println(actual);
 		assertEquals(actual.size(), 2);
-		assertThat(actual, hasItem(PREFIX.resolve("SimpleInvertedIndex.java")));
+		assertThat(actual, hasItem(PREFIX.resolve("InvertedIndex.java")));
 		assertThat(actual, hasItem(PREFIX.resolve("DocumentIndex.java")));
 	}
 
