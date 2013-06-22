@@ -5,17 +5,19 @@ import java.util.Collections;
 import java.util.List;
 
 public class InvertedList implements DocumentList {
-	private static int initialSpace = 16;
+	private static final int initialSpace = 16;
+	private static final float k = 1.75f;
+	private static final float b = 0.75f;
 	
 	private int[] documents;
 	private int[] wordFrequency;
-	private int[] scores;
+	private float[] scores;
 	private int documentCount;
 	
 	protected InvertedList() {
 		this.documents = new int[initialSpace];
 		this.wordFrequency = new int[initialSpace];
-		this.scores = new int[initialSpace];
+		this.scores = new float[initialSpace];
 		this.documentCount = 0;
 	}
 	
@@ -41,11 +43,10 @@ public class InvertedList implements DocumentList {
 		documentCount++;
 	}
 	
-	protected void add(int id, int score) {
-		// TODO: This is rather dirty stuff :(
+	private void add(int id, float score) {
 		if(documents.length == documentCount) {
 			int[] newDocuments = new int[documents.length * 2];
-			int[] newScores = new int[documents.length * 2];
+			float[] newScores = new float[documents.length * 2];
 			for(int i = 0; i < documents.length; i++) {
 				newDocuments[i] = documents[i];
 			}
@@ -60,11 +61,17 @@ public class InvertedList implements DocumentList {
 		documentCount++;
 	}
 	
-	protected void score(int totalDocumentCount) {
-		this.scores = new int[documentCount];
-		int idf = binaryLog(totalDocumentCount / documentCount);
+	protected void score(InvertedIndex index) {
+		this.scores = new float[documentCount];
+		
+		float idf = binaryLog(index.documentCount / documentCount);
+		
 		for(int i = 0; i < documentCount; i++) {
-			this.scores[i] = wordFrequency[i] * idf;
+			float alpha = 1.0f - b + b * index.documentLength[documents[i]] /
+					index.averageDocumentLength;
+			float tf = (float)wordFrequency[i] * (k + 1.0f) /
+					(k * alpha + wordFrequency[i]);
+			this.scores[i] = tf * idf;
 		}
 	}
 	
@@ -78,18 +85,14 @@ public class InvertedList implements DocumentList {
 	}
 	
 	@Override
-	public List<Integer> asList() {
+	public List<ScoredDocument> asList() {
 		ArrayList<ScoredDocument> scoredList = new ArrayList<ScoredDocument>();
 		for(int i = 0; i < documentCount; i++) {
 			scoredList.add(new ScoredDocument(documents[i], scores[i]));
 		}
 		Collections.sort(scoredList);
 		
-		ArrayList<Integer> list = new ArrayList<Integer>();
-		for(ScoredDocument d: scoredList) {
-			list.add(d.getId());
-		}
-		return list;
+		return scoredList;
 	}
 
 	public static InvertedList intersect(InvertedList a, InvertedList b) {

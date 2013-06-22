@@ -5,17 +5,31 @@ import java.util.Map.Entry;
 
 public class InvertedIndex implements DocumentIndex {
 	private static final int minimumWordLength = 2;
+	private static final int initialSpace = 16;
 	
 	private HashMap<String, InvertedList> invertedIndex;
-	private int documentCount;
+	
+	protected int[] documentLength;
+	protected float averageDocumentLength;
+	protected int documentCount;
 	
 	public InvertedIndex() {
 		this.invertedIndex = new HashMap<String, InvertedList>();
+		this.documentLength = new int[initialSpace];
+		this.averageDocumentLength = 0.0f;
 		this.documentCount = 0;
 	}
 
 	public void addDocument(Document document) {
 		char[] content = document.getContent().toCharArray();
+		
+		if(documentLength.length == documentCount) {
+			int[] newDocumentLength = new int[documentLength.length * 2];
+			for(int i = 0; i < documentLength.length; i++) {
+				newDocumentLength[i] = documentLength[i];
+			}
+			documentLength = newDocumentLength;
+		}
 		
 		int pos = 0;
 		while(pos < content.length) {
@@ -28,6 +42,7 @@ public class InvertedIndex implements DocumentIndex {
 			if(wordLength >= minimumWordLength) {
 				String word = normalizeWord(new String(content, wordBegin, wordLength));
 				addToIndex(word, documentCount);
+				documentLength[documentCount]++;
 			}
 		}
 		documentCount++;
@@ -48,8 +63,14 @@ public class InvertedIndex implements DocumentIndex {
 	
 	@Override
 	public void finish() {
+		long totalDocumentLength = 0;
+		for(int i = 0; i < documentCount; i++) {
+			totalDocumentLength += documentLength[i];
+		}
+		this.averageDocumentLength = (float)totalDocumentLength / documentCount;
+		
 		for(Entry<String, InvertedList> entry: invertedIndex.entrySet()) {
-			entry.getValue().score(documentCount);
+			entry.getValue().score(this);
 		}
 	}
 	

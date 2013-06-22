@@ -2,9 +2,9 @@ package edu.kit.iti.algo2.panda.indexing;
 
 public class ScoredDocument implements Comparable<ScoredDocument> {
 	private final int id;
-	private final int score;
+	private final float score;
 	
-	public ScoredDocument(int id, int score) {
+	public ScoredDocument(int id, float score) {
 		this.id = id;
 		this.score = score;
 	}
@@ -20,7 +20,7 @@ public class ScoredDocument implements Comparable<ScoredDocument> {
 		return id;
 	}
 
-	public int getScore() {
+	public float getScore() {
 		return score;
 	}
 }

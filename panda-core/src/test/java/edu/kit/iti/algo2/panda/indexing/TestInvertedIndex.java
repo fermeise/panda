@@ -11,7 +11,7 @@ import org.junit.Test;
 public class TestInvertedIndex {
 	
 	@Test
-	public void testSimpleInvertedIndex() throws IOException {
+	public void testInvertedIndex() throws IOException {
 		ArrayList<WikipediaArticle> entries = WikipediaArticle.loadArticles();
 		
 		InvertedIndex documents = new InvertedIndex();
@@ -21,16 +21,16 @@ public class TestInvertedIndex {
 		documents.finish();
 		
 		QueryProcessor queryProcessor = new QueryProcessor(documents);
-		List<Integer> query = queryProcessor.query("Schrödinger cat");
-		for(Integer documentId: query) {
-			System.out.println(entries.get(documentId).getTitle());
+		List<ScoredDocument> query = queryProcessor.query("Schrödinger cat");
+		for(ScoredDocument doc: query) {
+			System.out.println(doc.getScore() + " " + entries.get(doc.getId()).getTitle());
 		}
 		assertEquals(8, query.size());
 		System.out.println("");
 		
 		query = queryProcessor.query("relativity theory");
-		for(Integer documentId: query) {
-			System.out.println(entries.get(documentId).getTitle());
+		for(ScoredDocument doc: query) {
+			System.out.println(doc.getScore() + " " + entries.get(doc.getId()).getTitle());
 		}
 	}
 }

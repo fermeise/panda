@@ -11,12 +11,12 @@ public class QueryProcessor {
 		this.index = index;
 	}
 
-	public List<Integer> query(String string) {
+	public List<ScoredDocument> query(String string) {
 		Scanner scanner = new Scanner(string);
 		scanner.useDelimiter(" ");
 		if(!scanner.hasNext()) {
 			scanner.close();
-			return new ArrayList<Integer>();
+			return new ArrayList<ScoredDocument>();
 		}
 		InvertedList query = index.queryWord(scanner.next());
 		while(scanner.hasNext()) {

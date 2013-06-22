@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class WikipediaArticle implements Document {
-	private static final String sentenceFile = "wikipedia-sentences.csv";
+	private static final String sentenceFile = "..//wikipedia-sentences.csv";
 	private String article;
 	private String content;
 	

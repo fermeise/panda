@@ -10,5 +10,5 @@ public interface DocumentList {
 	/**
 	 * @return The document indices.
 	 */
-	public List<Integer> asList();
+	public List<ScoredDocument> asList();
 }

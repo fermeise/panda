@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import edu.kit.iti.algo2.panda.indexing.DocumentIndex;
+import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
 
 public class FilesystemCrawler {
 	
@@ -26,10 +27,10 @@ public class FilesystemCrawler {
 		this.index = index;
 	}
 	
-	public List<Path> getDocuments(List<Integer> documentIndices) {
-		List<Path> result = new ArrayList<>(documentIndices.size());
-		for (int index : documentIndices) {
-			result.add(documents.get(index));
+	public List<Path> getDocuments(List<ScoredDocument> documentIndices) {
+		List<Path> result = new ArrayList<Path>(documentIndices.size());
+		for (ScoredDocument doc : documentIndices) {
+			result.add(documents.get(doc.getId()));
 		}
 		return result;
 	}

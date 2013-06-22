@@ -16,6 +16,7 @@ import org.junit.Test;
 import edu.kit.iti.algo2.panda.indexing.DocumentIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
+import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
 
 public class CrawlerTest {
 	
@@ -29,7 +30,7 @@ public class CrawlerTest {
 		FilesystemCrawler crawler = new FilesystemCrawler(index);
 		crawler.crawl(SEARCH_DIR);
 		QueryProcessor processor = new QueryProcessor(index);
-		List<Integer> queryResult = processor.query("int Document");
+		List<ScoredDocument> queryResult = processor.query("int Document");
 		
 		List<Path> actual = crawler.getDocuments(queryResult);
 		System.out.println(actual);
