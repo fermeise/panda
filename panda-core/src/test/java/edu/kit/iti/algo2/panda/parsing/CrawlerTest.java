@@ -27,8 +27,9 @@ public class CrawlerTest {
 	public void test() throws IOException {
 		Logger.getGlobal().setLevel(Level.ALL);
 		DocumentIndex index = new InvertedIndex();
-		FilesystemCrawler crawler = new FilesystemCrawler(index);
+		FileSystemCrawler crawler = new FileSystemCrawler();
 		crawler.crawl(SEARCH_DIR);
+		crawler.index(index);
 		QueryProcessor processor = new QueryProcessor(index);
 		List<ScoredDocument> queryResult = processor.query("int Document");
 		

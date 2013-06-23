@@ -21,6 +21,18 @@ public class InvertedList implements DocumentList {
 		this.documentCount = 0;
 	}
 	
+	protected int[] getDocuments() {
+		return documents;
+	}
+
+	protected float[] getScores() {
+		return scores;
+	}
+	
+	public int getDocumentCount() {
+		return documentCount;
+	}
+
 	protected void add(int id) {
 		if(documentCount > 0 && documents[documentCount - 1] == id) {
 			wordFrequency[documentCount - 1]++;
@@ -43,7 +55,7 @@ public class InvertedList implements DocumentList {
 		documentCount++;
 	}
 	
-	private void add(int id, float score) {
+	protected void add(int id, float score) {
 		if(documents.length == documentCount) {
 			int[] newDocuments = new int[documents.length * 2];
 			float[] newScores = new float[documents.length * 2];
