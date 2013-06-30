@@ -25,5 +25,25 @@ public class QueryProcessor {
 		scanner.close();
 		return query.asList();
 	}
-	
+
+	public String extractSnippet(Document document, String query) {
+		String content = document.getContent();
+		Scanner scanner = new Scanner(query);
+		scanner.useDelimiter(" ");
+		if(scanner.hasNext()) {
+			String word = scanner.next();
+			WordIterator it = new WordIterator(content);
+			while(it.hasNext()) {
+				WordOccurrence occurence = it.next();
+				if(occurence.getWord().equals(WordIterator.normalizeWord(word))) {
+					String snippet = content.substring(Math.max(0, occurence.getBegin() - 70), Math.min(content.length(), occurence.getBegin() + 70));
+					scanner.close();
+					return snippet.replace("\n", " ");
+				}
+			}
+		}
+		
+		scanner.close();
+		return "";
+	}  
 }

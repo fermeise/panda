@@ -3,3 +3,5 @@
 .settings/
 target/
 wikipedia-sentences.csv
+*.pnd
+*.db

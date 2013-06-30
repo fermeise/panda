@@ -6,32 +6,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.tika.exception.TikaException;
+
+import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.DocumentIndex;
-import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
 
 public class FileSystemCrawler {
-	private static final Logger LOG = Logger.getLogger("Crawler");
+	private static final Logger log = Logger.getLogger("FileSystemCrawler");
 	
-	private final ArrayList<FileEntry> documents;
+	private DocumentFactory factory;
+	private DocumentIndex index;
 	
-	public FileSystemCrawler() {
-		this.documents = new ArrayList<FileEntry>();
-	}
-	
-	public List<FileEntry> getDocuments() {
-		return this.documents;
-	}
-	
-	public List<Path> getDocuments(List<ScoredDocument> documentIndices) {
-		ArrayList<Path> result = new ArrayList<Path>(documentIndices.size());
-		for (ScoredDocument doc : documentIndices) {
-			result.add(documents.get(doc.getId()).getFile().toPath());
-		}
-		return result;
+	public FileSystemCrawler(DocumentFactory factory, DocumentIndex index) {
+		this.factory = factory;
+		this.index = index;
 	}
 	
 	public void crawl(Path directory) throws IOException {
@@ -39,19 +29,19 @@ public class FileSystemCrawler {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				super.visitFile(file, attrs);
-				FileEntry entry = new FileEntry(file.toFile());
-				if (!entry.getContent().isEmpty()) {
-					documents.add(entry);
-					LOG.info(file.toString());
+				try {
+					Document document = factory.createDocument(file.toFile());
+					if (!document.getContent().isEmpty()) {
+						log.info(file.toString());
+						factory.addToLibrary(document);
+						index.addDocument(document);
+					}
+				} catch (TikaException e) {
+					log.warning("Could not parse content of file '" + file.toString() + "'.");
 				}
+				
 				return FileVisitResult.CONTINUE;
 			}
 		});
-	}
-	
-	public void index(DocumentIndex index) {
-		for(FileEntry entry: documents) {
-			index.addDocument(entry);
-		}
 	}
 }
