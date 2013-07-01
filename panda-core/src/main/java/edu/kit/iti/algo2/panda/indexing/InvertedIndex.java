@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class InvertedIndex implements DocumentIndex {
 	private static final int minimumWordLength = 2;
@@ -26,6 +27,10 @@ public class InvertedIndex implements DocumentIndex {
 		this.documentLength = new int[initialSpace];
 		this.averageDocumentLength = 0.0f;
 		this.documentCount = 0;
+	}
+	
+	public Set<String> getWords() {
+		return this.invertedIndex.keySet();
 	}
 
 	public void addDocument(Document document) {
