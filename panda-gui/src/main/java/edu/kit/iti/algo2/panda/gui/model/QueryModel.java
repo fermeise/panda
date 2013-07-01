@@ -5,21 +5,22 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 
+import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
-import edu.kit.iti.algo2.panda.parsing.FileSystemCrawler;
+import edu.kit.iti.algo2.panda.parsing.DocumentFactory;
 
 public class QueryModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = 1L;
 	
-	private final FileSystemCrawler crawler;
+	private final DocumentFactory documentFactory;
 	private final QueryProcessor processor;
 	
 	private List<ScoredDocument> result = Collections.emptyList();
 	
-	public QueryModel(InvertedIndex index, FileSystemCrawler crawler) {
-		this.crawler = crawler;
+	public QueryModel(DocumentFactory factory, InvertedIndex index) {
+		this.documentFactory = factory;
 		this.processor = new QueryProcessor(index);
 	}
 	
@@ -36,7 +37,8 @@ public class QueryModel extends AbstractListModel<String> {
 
 	@Override
 	public String getElementAt(int index) {
-		return crawler.getDocuments().get(result.get(index).getId()).getFile().getName();
+		Document document = documentFactory.restoreDocument(result.get(index).getId());
+		return document.getTitle();
 	}
 
 }

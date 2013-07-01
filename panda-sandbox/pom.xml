@@ -9,4 +9,22 @@
     	<version>0.0.1-SNAPSHOT</version>
     	<relativePath>../pom.xml</relativePath>
     </parent>
+    
+    <dependencies>
+      <dependency>
+    		<groupId>${project.groupId}</groupId>
+    		<artifactId>panda-core</artifactId>
+    		<version>${project.version}</version>
+    	</dependency>
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-core</artifactId>
+        <version>4.3.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-analyzers-common</artifactId>
+        <version>4.3.1</version>
+      </dependency>
+    </dependencies>
 </project>

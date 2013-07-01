@@ -10,7 +10,7 @@ import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
 import edu.kit.iti.algo2.panda.indexing.WikipediaArticle;
 
-public class WikipediaQuery {
+public class QueryWikipedia {
 	public static void main(String[] args) throws IOException {
 		System.out.println("Loading documents...");
 		ArrayList<WikipediaArticle> entries = WikipediaArticle.loadArticles();

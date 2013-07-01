@@ -3,6 +3,13 @@
     <groupId>edu.kit.iti.algo2.panda</groupId>
     <artifactId>panda-core</artifactId>
     
+    <parent>
+    	<groupId>edu.kit.iti.algo2</groupId>
+    	<artifactId>panda</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<relativePath>../pom.xml</relativePath>
+    </parent>
+    
     <dependencies>
     	<dependency>
     		<groupId>org.apache.tika</groupId>
@@ -15,11 +22,4 @@
         <version>3.7.2</version>
     	</dependency>
     </dependencies>
-    
-    <parent>
-    	<groupId>edu.kit.iti.algo2</groupId>
-    	<artifactId>panda</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    	<relativePath>../pom.xml</relativePath>
-    </parent>
 </project>
