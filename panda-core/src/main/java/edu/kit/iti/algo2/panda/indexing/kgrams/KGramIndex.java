@@ -1,4 +1,4 @@
-package edu.kit.iti.algo2.panda.indexing;
+package edu.kit.iti.algo2.panda.indexing.kgrams;
 
 import java.util.ArrayList;
 import java.util.Collection;

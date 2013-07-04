@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.junit.*;
 
+import edu.kit.iti.algo2.panda.indexing.kgrams.KGramIndex;
+
 public class TestKGram {
 	
 	@Test

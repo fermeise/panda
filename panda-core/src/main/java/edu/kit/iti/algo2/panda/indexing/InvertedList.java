@@ -10,14 +10,12 @@ public class InvertedList implements DocumentList {
 	private static final float b = 0.75f;
 	
 	private int[] documents;
-	private int[] wordFrequency;
-	private float[] scores;
+	private int[] scores;
 	private int documentCount;
 	
 	protected InvertedList() {
 		this.documents = new int[initialSpace];
-		this.wordFrequency = new int[initialSpace];
-		this.scores = new float[initialSpace];
+		this.scores = new int[initialSpace];
 		this.documentCount = 0;
 	}
 	
@@ -25,7 +23,7 @@ public class InvertedList implements DocumentList {
 		return documents;
 	}
 
-	protected float[] getScores() {
+	protected int[] getScores() {
 		return scores;
 	}
 	
@@ -33,32 +31,14 @@ public class InvertedList implements DocumentList {
 		return documentCount;
 	}
 
-	protected void add(int id) {
+	protected void add(int id, int occurrences) {
 		if(documentCount > 0 && documents[documentCount - 1] == id) {
-			wordFrequency[documentCount - 1]++;
+			scores[documentCount - 1]++;
 			return;
 		}
 		if(documents.length == documentCount) {
 			int[] newDocuments = new int[documents.length * 2];
-			int[] newWordFrequency = new int[documents.length * 2];
-			for(int i = 0; i < documents.length; i++) {
-				newDocuments[i] = documents[i];
-			}
-			for(int i = 0; i < documents.length; i++) {
-				newWordFrequency[i] = wordFrequency[i];
-			}
-			documents = newDocuments;
-			wordFrequency = newWordFrequency;
-		}
-		documents[documentCount] = id;
-		wordFrequency[documentCount] = 1;
-		documentCount++;
-	}
-	
-	protected void add(int id, float score) {
-		if(documents.length == documentCount) {
-			int[] newDocuments = new int[documents.length * 2];
-			float[] newScores = new float[documents.length * 2];
+			int[] newScores = new int[documents.length * 2];
 			for(int i = 0; i < documents.length; i++) {
 				newDocuments[i] = documents[i];
 			}
@@ -69,21 +49,20 @@ public class InvertedList implements DocumentList {
 			scores = newScores;
 		}
 		documents[documentCount] = id;
-		scores[documentCount] = score;
+		scores[documentCount] = occurrences;
 		documentCount++;
 	}
 	
 	protected void score(InvertedIndex index) {
-		this.scores = new float[documentCount];
+		// Maximum score is binaryLog(index.documentCount) * (k + 1)
 		
 		float idf = binaryLog(index.documentCount / documentCount);
 		
 		for(int i = 0; i < documentCount; i++) {
 			float alpha = 1.0f - b + b * index.documentLength[documents[i]] /
 					index.averageDocumentLength;
-			float tf = (float)wordFrequency[i] * (k + 1.0f) /
-					(k * alpha + wordFrequency[i]);
-			this.scores[i] = tf * idf;
+			float tf = (float)scores[i] * (k + 1.0f) / (k * alpha + scores[i]);
+			this.scores[i] = (int)(tf * idf * 256.f);
 		}
 	}
 	

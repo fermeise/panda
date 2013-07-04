@@ -1,5 +1,7 @@
 package edu.kit.iti.algo2.panda.indexing;
 
+import java.util.Set;
+
 /**
  * An index of documents.
  * @author Christian
@@ -20,6 +22,12 @@ public interface DocumentIndex {
 	 * @return The total number of documents.
 	 */
 	public int getDocumentCount();
+	
+	/**
+	 * 
+	 * @return All words in the index.
+	 */
+	public Set<String> getWords();
 	
 	/**
 	 * Query the index for documents containing a certain word.
