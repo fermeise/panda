@@ -24,10 +24,15 @@ public interface DocumentIndex {
 	public int getDocumentCount();
 	
 	/**
-	 * 
 	 * @return All words in the index.
 	 */
 	public Set<String> getWords();
+	
+	/**
+	 * @param word The word.
+	 * @return A score value for an occurrence of this word.
+	 */
+	public int getWordScore(String word);
 	
 	/**
 	 * Query the index for documents containing a certain word.

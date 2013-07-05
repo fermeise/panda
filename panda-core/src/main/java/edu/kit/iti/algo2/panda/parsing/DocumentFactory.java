@@ -22,6 +22,7 @@ public class DocumentFactory {
 	private Connection connection;
 	private PreparedStatement addDocumentStmt;
 	private PreparedStatement retrieveDocumentStmt;
+	private PreparedStatement getDocumentCountStmt;
 	
 	public DocumentFactory(String libraryFile) {
 		try {
@@ -33,6 +34,7 @@ public class DocumentFactory {
 					"file text, title text, content text) ");
 			addDocumentStmt = connection.prepareStatement("insert into documents (file, title, content) values (?, ?, ?)");
 			retrieveDocumentStmt = connection.prepareStatement("select file, title, content from documents where id=? + 1");
+			getDocumentCountStmt = connection.prepareStatement("select count(*) from documents");
 		} catch (ClassNotFoundException e) {
 			log.severe("SQLite JDBC driver not found.");
 		} catch(SQLException e) {
@@ -60,6 +62,19 @@ public class DocumentFactory {
 		}
 		
 		return null;
+	}
+	
+	public int getDocumentCount() {
+		try {
+			ResultSet rs = getDocumentCountStmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			log.warning("Could not retrieve document count.");
+		}
+		
+		return 0;
 	}
 	
 	protected void addToLibrary(Document document) {

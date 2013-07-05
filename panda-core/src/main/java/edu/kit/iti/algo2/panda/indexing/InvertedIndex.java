@@ -85,7 +85,7 @@ public class InvertedIndex implements DocumentIndex {
 	
 	@Override
 	public InvertedList queryWord(String word) {
-		InvertedList documents = invertedIndex.get(normalizeWord(word));
+		InvertedList documents = invertedIndex.get(word);
 		if(documents == null) {
 			documents = new InvertedList();
 		}
@@ -100,6 +100,11 @@ public class InvertedIndex implements DocumentIndex {
 	@Override
 	public Set<String> getWords() {
 		return invertedIndex.keySet();
+	}
+	
+	@Override
+	public int getWordScore(String word) {
+		return invertedIndex.get(word).getWordScore(this);
 	}
 
 	public void saveToFile(File file) throws IOException {

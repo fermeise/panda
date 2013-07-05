@@ -85,6 +85,10 @@ public class InvertedList implements DocumentList {
 		
 		return scoredList;
 	}
+	
+	public int getWordScore(InvertedIndex index) {
+		return binaryLog(index.documentCount / documentCount) * 256;
+	}
 
 	public static InvertedList intersect(InvertedList a, InvertedList b) {
 		InvertedList r = new InvertedList();

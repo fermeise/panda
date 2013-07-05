@@ -1,6 +1,8 @@
 package edu.kit.iti.algo2.panda.indexing;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,39 +13,80 @@ public class QueryProcessor {
 		this.index = index;
 	}
 
-	public List<ScoredDocument> query(String string) {
-		Scanner scanner = new Scanner(string);
-		scanner.useDelimiter(" ");
-		if(!scanner.hasNext()) {
-			scanner.close();
+	public List<ScoredDocument> query(String query) {
+		ArrayList<String> words = getWords(query);
+		
+		if(words.isEmpty()) {
 			return new ArrayList<ScoredDocument>();
 		}
-		InvertedList query = index.queryWord(scanner.next());
-		while(scanner.hasNext()) {
-			query = InvertedList.intersect(query, index.queryWord(scanner.next()));
+		
+		Iterator<String> it = words.iterator();
+		InvertedList result = index.queryWord(it.next());
+		while(it.hasNext()) {
+			result = InvertedList.intersect(result, index.queryWord(it.next()));
 		}
-		scanner.close();
-		return query.asList();
+		return result.asList();
 	}
 
-	public String extractSnippet(Document document, String query) {
+	public String extractSnippet(Document document, DocumentIndex index, String query, int maxSnippetSize) {
+		ArrayList<String> words = getWords(query);
 		String content = document.getContent();
-		Scanner scanner = new Scanner(query);
-		scanner.useDelimiter(" ");
-		if(scanner.hasNext()) {
-			String word = scanner.next();
-			WordIterator it = new WordIterator(content);
-			while(it.hasNext()) {
-				WordOccurrence occurence = it.next();
-				if(occurence.getWord().equals(WordIterator.normalizeWord(word))) {
-					String snippet = content.substring(Math.max(0, occurence.getBegin() - 70), Math.min(content.length(), occurence.getBegin() + 70));
-					scanner.close();
-					return snippet.replace("\n", " ");
-				}
+		
+		int bestMatchBegin = 0;
+		int bestMatchEnd = 0;
+		int bestMatchScore = 0;
+
+		LinkedList<TextOccurrence> match = new LinkedList<>();
+		int matchScore = 0;
+		
+		// Determine best match (the one with maximum score)
+		WordIterator it = new WordIterator(content);
+		while(it.hasNext()) {
+			TextOccurrence current = it.next();
+			if(words.contains(current.getText())) {
+				match.add(current);
+				matchScore += index.getWordScore(current.getText());
+			}
+			while(!match.isEmpty() &&
+					match.getLast().getPosition() + match.getLast().getText().length()
+					- match.getFirst().getPosition() > maxSnippetSize) {
+				matchScore -= index.getWordScore(match.getFirst().getText());
+				match.removeFirst();
+			}
+			if(matchScore > bestMatchScore) {
+				bestMatchBegin = match.getFirst().getPosition();
+				bestMatchEnd = match.getLast().getPosition() + match.getLast().getText().length();
+				bestMatchScore = matchScore;
 			}
 		}
 		
+		int bestMatchLength = bestMatchEnd - bestMatchBegin;
+		int begin = Math.max(bestMatchBegin - (maxSnippetSize - bestMatchLength) / 2, 0);
+		int end = Math.min(bestMatchEnd + (maxSnippetSize - bestMatchLength) / 2, content.length());
+		while(begin < bestMatchBegin &&
+				!(Character.isAlphabetic(content.charAt(begin)) &&
+						(begin == 0 || !Character.isAlphabetic(content.charAt(begin - 1))))) {
+			begin++;
+		}
+		
+		while(end > bestMatchEnd &&
+				!(Character.isAlphabetic(content.charAt(end - 1)) &&
+						(end == content.length() || !Character.isAlphabetic(content.charAt(end))))) {
+			end--;
+		}
+		
+		return content.substring(begin, end).replace("\r\n", " ").replace("\n", " ");
+	}
+	
+	private ArrayList<String> getWords(String query) {
+		ArrayList<String> words = new ArrayList<>();
+		
+		Scanner scanner = new Scanner(query);
+		scanner.useDelimiter(" ");
+		while(scanner.hasNext()) {
+			words.add(WordIterator.normalizeWord(scanner.next()));
+		}
 		scanner.close();
-		return "";
-	}  
+		return words;
+	}
 }

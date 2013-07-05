@@ -46,7 +46,7 @@ public class QueryFiles {
 				
 				System.out.println((i + 1) + ". " + document.getFile().toString()
 						+ " (" + result.get(i).getScore() + ")");
-				System.out.println(queryProcessor.extractSnippet(document, query));
+				System.out.println(queryProcessor.extractSnippet(document, index, query, 100));
 			}
 			System.out.println("");
 			query = scanner.nextLine();

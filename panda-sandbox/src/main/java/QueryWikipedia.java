@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
@@ -43,8 +44,11 @@ public class QueryWikipedia {
 		while(query != "") {
 			List<ScoredDocument> result = queryProcessor.query(query);
 			for(int i = 0; i < 10 && i < result.size(); i++) {
-				System.out.println((i + 1) + ". " + entries.get(result.get(i).getId()).getTitle()
+				Document document = entries.get(result.get(i).getId());
+				
+				System.out.println((i + 1) + ". " + document.getTitle()
 						+ " (" + result.get(i).getScore() + ")");
+				System.out.println(queryProcessor.extractSnippet(document, documents, query, 100));
 			}
 			System.out.println("");
 			query = scanner.nextLine();

@@ -6,26 +6,33 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
-import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
+import edu.kit.iti.algo2.panda.indexing.DocumentIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
 import edu.kit.iti.algo2.panda.parsing.DocumentFactory;
 
 public class QueryModel extends AbstractListModel<String> {
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -968307538266585151L;
+
 	private final DocumentFactory documentFactory;
+	private final DocumentIndex documentIndex;
 	private final QueryProcessor processor;
 	
-	private List<ScoredDocument> result = Collections.emptyList();
+	private String query;
+	private List<ScoredDocument> result;
 	
-	public QueryModel(DocumentFactory factory, InvertedIndex index) {
+	public QueryModel(DocumentFactory factory, DocumentIndex documentIndex) {
 		this.documentFactory = factory;
-		this.processor = new QueryProcessor(index);
+		this.documentIndex = documentIndex;
+		this.processor = new QueryProcessor(documentIndex);
+		
+		this.query = "";
+		this.result = Collections.emptyList();
 	}
 	
 	public void setQuery(String queryString) {
 		this.fireIntervalRemoved(this, 0, result.size());
+		this.query = queryString;
 		this.result = processor.query(queryString);
 		this.fireIntervalAdded(this, 0, result.size());
 	}
@@ -38,7 +45,7 @@ public class QueryModel extends AbstractListModel<String> {
 	@Override
 	public String getElementAt(int index) {
 		Document document = documentFactory.restoreDocument(result.get(index).getId());
-		return document.getTitle();
+		return document.getTitle() + ": " + processor.extractSnippet(document, documentIndex, query, 100);
 	}
 
 }

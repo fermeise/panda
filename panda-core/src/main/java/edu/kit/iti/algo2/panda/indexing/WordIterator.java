@@ -3,12 +3,12 @@ package edu.kit.iti.algo2.panda.indexing;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class WordIterator implements Iterator<WordOccurrence> {
+public class WordIterator implements Iterator<TextOccurrence> {
 	private static final int minimumWordLength = 2;
 	
 	private final char[] content;
 	private int pos;
-	private WordOccurrence occurrence;
+	private TextOccurrence occurrence;
 	private boolean hasNext;
 	
 	public WordIterator(String str) {
@@ -23,11 +23,11 @@ public class WordIterator implements Iterator<WordOccurrence> {
 	}
 
 	@Override
-	public WordOccurrence next() {
+	public TextOccurrence next() {
 		if(!hasNext) {
 			throw new NoSuchElementException();
 		}
-		WordOccurrence result = occurrence;
+		TextOccurrence result = occurrence;
 		findNextWord();
 		return result;
 	}
@@ -46,9 +46,8 @@ public class WordIterator implements Iterator<WordOccurrence> {
 			
 			int wordLength = wordEnd - wordBegin;
 			if(wordLength >= minimumWordLength) {
-				occurrence = new WordOccurrence(
-						normalizeWord(new String(content, wordBegin, wordLength)),
-						wordBegin, wordEnd);
+				occurrence = new TextOccurrence(
+						normalizeWord(new String(content, wordBegin, wordLength)), wordBegin);
 				hasNext = true;
 				return;
 			}
