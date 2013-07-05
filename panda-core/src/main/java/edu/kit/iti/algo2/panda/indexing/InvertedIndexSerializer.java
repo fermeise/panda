@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.Map.Entry;
 
 public class InvertedIndexSerializer {
@@ -38,11 +39,12 @@ public class InvertedIndexSerializer {
 		stream.close();
 	}
 	
-	public static InvertedIndex fromStream(InputStream inputStream) throws IOException {
+	public static InvertedIndex fromStream(InputStream inputStream) throws IOException, ParseException {
 		ObjectInputStream stream = new ObjectInputStream(inputStream);
 		
 		if(!readChars(stream, indexFilePrefix.length()).equals(indexFilePrefix)) {
-			throw new IOException("The file does not seem to be a correct panda index file or the version does not match.");
+			throw new ParseException("The file does not seem to be a correct panda index file " +
+					"or the version does not match.", 0);
 		}
 		
 		InvertedIndex index = new InvertedIndex();

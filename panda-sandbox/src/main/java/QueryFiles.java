@@ -9,28 +9,18 @@ import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
+import edu.kit.iti.algo2.panda.management.IndexManager;
 import edu.kit.iti.algo2.panda.parsing.DocumentFactory;
-import edu.kit.iti.algo2.panda.parsing.FileSystemCrawler;
 
 public class QueryFiles {
 	public static void main(String[] args) throws IOException {
-		final DocumentFactory factory = new DocumentFactory("../library.db");
-		final InvertedIndex index;
+		final IndexManager manager = new IndexManager(
+				new File("../library.db"),
+				new File("../library.pnd"),
+				Paths.get("d:/Studium/KIT/"));
 		
-		File indexFile = new File("../library.pnd");
-		if(indexFile.exists()) {
-			System.out.println("Loading index...");
-			index = InvertedIndex.loadFromFile(indexFile);
-		} else {
-			System.out.println("Building index...");
-			index = new InvertedIndex();
-			FileSystemCrawler crawler = new FileSystemCrawler(factory, index);
-			crawler.crawl(Paths.get("d:/Studium/KIT/"));
-			index.finish();
-			
-			System.out.println("Saving index...");
-			index.saveToFile(indexFile);
-		}
+		final DocumentFactory factory = manager.getDocumentFactory();
+		final InvertedIndex index = manager.getDocumentIndex();
 		
 		System.out.println("Ready.");
 		System.out.println();

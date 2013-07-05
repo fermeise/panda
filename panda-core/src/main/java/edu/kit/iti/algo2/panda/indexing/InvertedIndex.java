@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -111,7 +112,7 @@ public class InvertedIndex implements DocumentIndex {
 		InvertedIndexSerializer.toStream(this, new FileOutputStream(file));
 	}
 	
-	public static InvertedIndex loadFromFile(File file) throws IOException {
+	public static InvertedIndex loadFromFile(File file) throws IOException, ParseException {
 		return InvertedIndexSerializer.fromStream(new FileInputStream(file));
 	}
 }

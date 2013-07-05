@@ -1,6 +1,7 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -19,10 +20,10 @@ public class QueryWikipedia {
 		InvertedIndex documents;
 		
 		File indexFile = new File("../wikipedia-sentences.pnd");
-		if(indexFile.exists()) {
-			System.out.println("Loading index...");
+		System.out.println("Loading index...");
+		try {
 			documents = InvertedIndex.loadFromFile(indexFile);
-		} else {
+		} catch (ParseException e) {
 			System.out.println("Building index...");
 			documents = new InvertedIndex();
 			for(WikipediaArticle entry: entries) {

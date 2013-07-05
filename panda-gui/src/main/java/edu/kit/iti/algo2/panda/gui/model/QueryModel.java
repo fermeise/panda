@@ -9,6 +9,7 @@ import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.DocumentIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
+import edu.kit.iti.algo2.panda.management.IndexManager;
 import edu.kit.iti.algo2.panda.parsing.DocumentFactory;
 
 public class QueryModel extends AbstractListModel<String> {
@@ -21,9 +22,9 @@ public class QueryModel extends AbstractListModel<String> {
 	private String query;
 	private List<ScoredDocument> result;
 	
-	public QueryModel(DocumentFactory factory, DocumentIndex documentIndex) {
-		this.documentFactory = factory;
-		this.documentIndex = documentIndex;
+	public QueryModel(IndexManager manager) {
+		this.documentFactory = manager.getDocumentFactory();
+		this.documentIndex = manager.getDocumentIndex();
 		this.processor = new QueryProcessor(documentIndex);
 		
 		this.query = "";
