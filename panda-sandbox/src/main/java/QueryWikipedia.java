@@ -29,7 +29,7 @@ public class QueryWikipedia {
 			for(WikipediaArticle entry: entries) {
 				documents.addDocument(entry);
 			}
-			documents.finish();
+			documents.initialScoring();
 			
 			System.out.println("Saving index...");
 			documents.saveToFile(indexFile);
@@ -43,7 +43,7 @@ public class QueryWikipedia {
 		
 		String query = scanner.nextLine();
 		while(query != "") {
-			List<ScoredDocument> result = queryProcessor.query(query);
+			List<ScoredDocument> result = queryProcessor.query(query, 50);
 			for(int i = 0; i < 10 && i < result.size(); i++) {
 				Document document = entries.get(result.get(i).getId());
 				

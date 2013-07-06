@@ -4,11 +4,11 @@ import java.util.List;
 
 /**
  * A list of document indices.
- * @author Christian
  */
 public interface DocumentList {
 	/**
-	 * @return The document indices.
+	 * @param maxResultCount The maximum number of results returned.
+	 * @return The best ranked documents in order of descending score.
 	 */
-	public List<ScoredDocument> asList();
+	public List<ScoredDocument> bestResults(int maxResultCount);
 }

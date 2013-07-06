@@ -6,15 +6,16 @@ import java.nio.file.Path;
 import java.text.ParseException;
 
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
-import edu.kit.iti.algo2.panda.parsing.DocumentFactory;
+import edu.kit.iti.algo2.panda.parsing.DocumentStorage;
+import edu.kit.iti.algo2.panda.parsing.SQLiteDocumentStorage;
 import edu.kit.iti.algo2.panda.parsing.FileSystemCrawler;
 
 public class IndexManager {
-	public final DocumentFactory factory;
+	public final DocumentStorage storage;
 	public final InvertedIndex index;
 	
 	public IndexManager(File documentLibraryFile, File indexFile, Path documentPath) throws IOException {
-		this.factory = new DocumentFactory(documentLibraryFile.getAbsolutePath());
+		this.storage = new SQLiteDocumentStorage(documentLibraryFile.getAbsolutePath());
 
 		if(indexFile.exists()) {
 			System.out.println("Loading index...");
@@ -25,10 +26,10 @@ public class IndexManager {
 				System.out.println("Index file has wrong format.");
 				System.out.println("Rebuilding...");
 				restoredIndex = new InvertedIndex();
-				for(int i = 0; i < factory.getDocumentCount(); i++) {
-					restoredIndex.addDocument(factory.restoreDocument(i));
+				for(int i = 0; i < storage.getMaxDocumentId(); i++) {
+					restoredIndex.addDocument(storage.restoreDocument(i));
 				}
-				restoredIndex.finish();
+				restoredIndex.initialScoring();
 				System.out.println("Saving index...");
 				restoredIndex.saveToFile(indexFile);
 			}
@@ -36,16 +37,16 @@ public class IndexManager {
 		} else {
 			System.out.println("Building index...");
 			index = new InvertedIndex();
-			FileSystemCrawler crawler = new FileSystemCrawler(factory, index);
+			FileSystemCrawler crawler = new FileSystemCrawler(storage, index);
 			crawler.crawl(documentPath);
-			index.finish();
+			index.initialScoring();
 			System.out.println("Saving index...");
 			index.saveToFile(indexFile);
 		}
 	}
 
-	public DocumentFactory getDocumentFactory() {
-		return factory;
+	public DocumentStorage getDocumentStorage() {
+		return storage;
 	}
 
 	public InvertedIndex getDocumentIndex() {

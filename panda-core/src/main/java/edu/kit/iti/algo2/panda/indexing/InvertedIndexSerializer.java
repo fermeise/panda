@@ -10,14 +10,19 @@ import java.text.ParseException;
 import java.util.Map.Entry;
 
 public class InvertedIndexSerializer {
-	private static final String indexFilePrefix = "%PND-0.1%";
+	private static final String indexFilePrefix = "%PND-0.2%";
 	
 	public static void toStream(InvertedIndex index, OutputStream outputStream) throws IOException {
 		ObjectOutputStream stream = new ObjectOutputStream(outputStream);
 		
 		stream.writeChars(indexFilePrefix);
-		stream.writeInt(index.documentCount);
-		stream.writeFloat(index.averageDocumentLength);
+		stream.writeInt(index.maxDocumentId);
+		stream.writeLong(index.totalDocumentLength);
+		
+		stream.writeInt(index.obsoleteDocuments.size());
+		for(Integer id: index.obsoleteDocuments) {
+			stream.writeInt(id);
+		}
 		
 		for(Entry<String, InvertedList> entry: index.invertedIndex.entrySet()) {
 			final String word = entry.getKey();
@@ -50,8 +55,13 @@ public class InvertedIndexSerializer {
 		InvertedIndex index = new InvertedIndex();
 		
 		try {
-			index.documentCount = stream.readInt();
-			index.averageDocumentLength = stream.readFloat();
+			index.maxDocumentId = stream.readInt();
+			index.totalDocumentLength = stream.readLong();
+			
+			int obsoleteDocumentCount = stream.readInt();
+			for(int i = 0; i < obsoleteDocumentCount; i++) {
+				index.obsoleteDocuments.add(stream.readInt());
+			}
 			
 			while(true) {
 				final int wordLength = stream.readInt();

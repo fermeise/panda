@@ -2,7 +2,9 @@ package edu.kit.iti.algo2.panda.indexing;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 
 public class InvertedList implements DocumentList {
 	private static final int initialSpace = 16;
@@ -56,55 +58,92 @@ public class InvertedList implements DocumentList {
 	protected void score(InvertedIndex index) {
 		// Maximum score is binaryLog(index.documentCount) * (k + 1)
 		
-		float idf = binaryLog(index.documentCount / documentCount);
+		float averageDocumentLength = (float)index.totalDocumentLength / (float)index.maxDocumentId;
+		float idf = binaryLog(index.maxDocumentId / documentCount);
 		
 		for(int i = 0; i < documentCount; i++) {
 			float alpha = 1.0f - b + b * index.documentLength[documents[i]] /
-					index.averageDocumentLength;
+					averageDocumentLength;
 			float tf = (float)scores[i] * (k + 1.0f) / (k * alpha + scores[i]);
 			this.scores[i] = (int)(tf * idf * 256.f);
 		}
 	}
 	
-	private int binaryLog(int arg) {
-		int r = -1;
-		while(arg > 0) {
-			arg >>= 1;
-			r++;
-		}
-		return r;
+	public void scoreLast(InvertedIndex index) {
+		float averageDocumentLength = (float)index.totalDocumentLength / (float)index.maxDocumentId;
+		float idf = binaryLog(index.maxDocumentId / documentCount);
+		
+		int i = documentCount - 1;
+		float alpha = 1.0f - b + b * index.documentLength[documents[i]] /
+				averageDocumentLength;
+		float tf = (float)scores[i] * (k + 1.0f) / (k * alpha + scores[i]);
+		this.scores[i] = (int)(tf * idf * 256.f);
 	}
 	
 	@Override
-	public List<ScoredDocument> asList() {
+	public List<ScoredDocument> bestResults(int maxResultCount) {
 		ArrayList<ScoredDocument> scoredList = new ArrayList<ScoredDocument>();
 		for(int i = 0; i < documentCount; i++) {
 			scoredList.add(new ScoredDocument(documents[i], scores[i]));
 		}
+		// TODO: Implement partial sorting
 		Collections.sort(scoredList);
 		
-		return scoredList;
+		return scoredList.subList(0, Math.min(maxResultCount, scoredList.size()));
 	}
 	
 	public int getWordScore(InvertedIndex index) {
-		return binaryLog(index.documentCount / documentCount) * 256;
+		return binaryLog(index.maxDocumentId / documentCount) * 256;
 	}
 
-	public static InvertedList intersect(InvertedList a, InvertedList b) {
-		InvertedList r = new InvertedList();
+	public InvertedList intersect(InvertedList b) {
+		InvertedList result = new InvertedList();
 		int indexA = 0, indexB = 0;
-		while(indexA < a.documentCount && indexB < b.documentCount) {
-			if(a.documents[indexA] < b.documents[indexB]) {
+		while(indexA < this.documentCount && indexB < b.documentCount) {
+			if(this.documents[indexA] < b.documents[indexB]) {
 				indexA++;
-			} else if(a.documents[indexA] > b.documents[indexB]) {
+			} else if(this.documents[indexA] > b.documents[indexB]) {
 				indexB++;
 			} else {
-				r.add(a.documents[indexA], a.scores[indexA] + b.scores[indexB]);
+				result.add(this.documents[indexA], this.scores[indexA] + b.scores[indexB]);
 				indexA++;
 				indexB++;
 			}
 		}
 		
+		return result;
+	}
+	
+	public InvertedList remove(TreeSet<Integer> b) {
+		InvertedList result = new InvertedList();
+		Iterator<Integer> bIt = b.iterator();
+		int indexA = 0;
+		int bValue = bIt.hasNext() ? bIt.next() : -1;
+		while(indexA < this.documentCount && bValue >= 0) {
+			if(this.documents[indexA] < bValue) {
+				result.add(this.documents[indexA], this.scores[indexA]);
+				indexA++;
+			} else if(this.documents[indexA] > bValue) {
+				bValue = bIt.hasNext() ? bIt.next() : -1;
+			} else {
+				indexA++;
+				bValue = bIt.hasNext() ? bIt.next() : -1;
+			}
+		}
+		while(indexA < this.documentCount) {
+			result.add(this.documents[indexA], this.scores[indexA]);
+			indexA++;
+		}
+		
+		return result;
+	}
+	
+	private static int binaryLog(int arg) {
+		int r = -1;
+		while(arg > 0) {
+			arg >>= 1;
+			r++;
+		}
 		return r;
 	}
 }

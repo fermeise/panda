@@ -33,7 +33,7 @@ public class TestPerformance {
 				for(WikipediaArticle article: articles) {
 					documents.addDocument(article);
 				}
-				documents.finish();
+				documents.initialScoring();
 				end = System.currentTimeMillis();
 				System.out.println("Panda: " + (end - begin) + " ms");
 		

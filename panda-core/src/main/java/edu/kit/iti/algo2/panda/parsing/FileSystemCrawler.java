@@ -8,19 +8,17 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Logger;
 
-import org.apache.tika.exception.TikaException;
-
 import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.DocumentIndex;
 
 public class FileSystemCrawler {
 	private static final Logger log = Logger.getLogger("FileSystemCrawler");
 	
-	private DocumentFactory factory;
+	private DocumentStorage storage;
 	private DocumentIndex index;
 	
-	public FileSystemCrawler(DocumentFactory factory, DocumentIndex index) {
-		this.factory = factory;
+	public FileSystemCrawler(DocumentStorage storage, DocumentIndex index) {
+		this.storage = storage;
 		this.index = index;
 	}
 	
@@ -30,13 +28,13 @@ public class FileSystemCrawler {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				super.visitFile(file, attrs);
 				try {
-					Document document = factory.createDocument(file.toFile());
+					Document document = TikaDocumentFactory.getInstance().createDocument(file.toFile());
 					if (!document.getContent().isEmpty()) {
 						log.info(file.toString());
-						factory.addToLibrary(document);
-						index.addDocument(document);
+						int id = index.addDocument(document);
+						storage.addDocument(id, document);
 					}
-				} catch (TikaException e) {
+				} catch (IOException e) {
 					log.warning("Could not parse content of file '" + file.toString() + "'.");
 				}
 				

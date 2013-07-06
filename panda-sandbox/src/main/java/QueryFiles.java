@@ -10,7 +10,7 @@ import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
 import edu.kit.iti.algo2.panda.management.IndexManager;
-import edu.kit.iti.algo2.panda.parsing.DocumentFactory;
+import edu.kit.iti.algo2.panda.parsing.DocumentStorage;
 
 public class QueryFiles {
 	public static void main(String[] args) throws IOException {
@@ -19,7 +19,7 @@ public class QueryFiles {
 				new File("../library.pnd"),
 				Paths.get("d:/Studium/KIT/"));
 		
-		final DocumentFactory factory = manager.getDocumentFactory();
+		final DocumentStorage factory = manager.getDocumentStorage();
 		final InvertedIndex index = manager.getDocumentIndex();
 		
 		System.out.println("Ready.");
@@ -30,7 +30,7 @@ public class QueryFiles {
 		
 		String query = scanner.nextLine();
 		while(query != "") {
-			List<ScoredDocument> result = queryProcessor.query(query);
+			List<ScoredDocument> result = queryProcessor.query(query, 50);
 			for(int i = 0; i < 10 && i < result.size(); i++) {
 				Document document = factory.restoreDocument(result.get(i).getId());
 				

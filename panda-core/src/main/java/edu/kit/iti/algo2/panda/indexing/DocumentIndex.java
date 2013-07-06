@@ -3,25 +3,38 @@ package edu.kit.iti.algo2.panda.indexing;
 import java.util.Set;
 
 /**
- * An index of documents.
- * @author Christian
+ * An index of documents. All indexed document can be identified using an
+ * integer id. The ids start with 0.
  */
 public interface DocumentIndex {
 	/**
 	 * Add a document to the index.
 	 * @param document The document to be added.
+	 * @return The id of the added document.
 	 */
-	public void addDocument(Document document);
+	public int addDocument(Document document);
 	
 	/**
-	 * Call this after all documents were added to the index.
+	 * Remove a document from the index.
+	 * @param id The id of the document to be removed.
 	 */
-	public void finish();
+	public void removeDocument(int id);
+	
+	/**
+	 * Call this before the first query is made so the initial score values
+	 * are calculated.
+	 */
+	public void initialScoring();
 	
 	/**
 	 * @return The total number of documents.
 	 */
 	public int getDocumentCount();
+	
+	/**
+	 * @return The first free document id (the highest used document id + 1).
+	 */
+	public int getMaxDocumentId();
 	
 	/**
 	 * @return All words in the index.

@@ -13,7 +13,7 @@ public class QueryProcessor {
 		this.index = index;
 	}
 
-	public List<ScoredDocument> query(String query) {
+	public List<ScoredDocument> query(String query, int maxResultCount) {
 		ArrayList<String> words = getWords(query);
 		
 		if(words.isEmpty()) {
@@ -23,9 +23,9 @@ public class QueryProcessor {
 		Iterator<String> it = words.iterator();
 		InvertedList result = index.queryWord(it.next());
 		while(it.hasNext()) {
-			result = InvertedList.intersect(result, index.queryWord(it.next()));
+			result = result.intersect(index.queryWord(it.next()));
 		}
-		return result.asList();
+		return result.bestResults(maxResultCount);
 	}
 
 	public String extractSnippet(Document document, DocumentIndex index, String query, int maxSnippetSize) {
