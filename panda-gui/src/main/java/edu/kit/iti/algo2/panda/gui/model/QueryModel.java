@@ -33,10 +33,16 @@ public class QueryModel extends AbstractListModel<String> {
 	}
 	
 	public void setQuery(String queryString) {
-		this.fireIntervalRemoved(this, 0, result.size());
+		List<ScoredDocument> oldResult = this.result;
+		List<ScoredDocument> newResult = processor.query(queryString, numberOfResults);
+		if (!oldResult.isEmpty()) {
+			this.fireIntervalRemoved(this, 0, oldResult.size()-1);
+		}
+		this.result = newResult;
 		this.query = queryString;
-		this.result = processor.query(queryString, numberOfResults);
-		this.fireIntervalAdded(this, 0, result.size());
+		if (!newResult.isEmpty()) {
+			this.fireIntervalAdded(this, 0, newResult.size()-1);
+		}
 	}
 
 	@Override

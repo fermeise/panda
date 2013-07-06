@@ -20,7 +20,7 @@ public class SearchView {
 	{
 		root.setLayout(new BorderLayout(10, 10));
 		root.getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		root.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	private final JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
