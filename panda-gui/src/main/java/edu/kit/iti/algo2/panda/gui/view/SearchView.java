@@ -14,6 +14,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -21,6 +22,9 @@ import javax.swing.event.DocumentListener;
 import edu.kit.iti.algo2.panda.gui.model.QueryModel;
 
 public class SearchView {
+	
+	private final static int RESULT_VERTICAL_SCROLLBAR = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS;
+	private final static int RESULT_HORIZONTAL_SCROLLBAR = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 	
 	private final JFrame root = new JFrame("PANDA Search");
 	
@@ -50,7 +54,8 @@ public class SearchView {
 		searchField.getDocument().addDocumentListener(new QueryDocumentListener());
 		searchField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
 		searchResult.setBorder(BorderFactory.createTitledBorder("Result:"));
-		centerPanel.add(searchResult, BorderLayout.CENTER);
+		JScrollPane searchResultWrapper = new JScrollPane(searchResult, RESULT_VERTICAL_SCROLLBAR, RESULT_HORIZONTAL_SCROLLBAR);
+		centerPanel.add(searchResultWrapper, BorderLayout.CENTER);
 		root.add(centerPanel);
 	}
 	
