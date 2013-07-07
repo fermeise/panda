@@ -147,7 +147,9 @@ public class InvertedIndex implements DocumentIndex {
 	}
 	
 	public static InvertedIndex loadFromFile(File file) throws IOException, ParseException {
-		return InvertedIndexSerializer.fromStream(new FileInputStream(file));
+		InvertedIndex result = InvertedIndexSerializer.fromStream(new FileInputStream(file));
+		result.calculatedInitialScoring = true;
+		return result;
 	}
 	
 	private InvertedList addToIndex(String word, int documentNumber) {
