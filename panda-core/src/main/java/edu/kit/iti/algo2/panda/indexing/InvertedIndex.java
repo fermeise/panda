@@ -107,10 +107,6 @@ public class InvertedIndex implements DocumentIndex {
 	
 	@Override
 	public InvertedList queryWord(String word) {
-		if(!calculatedInitialScoring) {
-			throw new IllegalStateException("The initial scoring has to be calculated before queries can be executed.");
-		}
-		
 		InvertedList documents = invertedIndex.get(word);
 		if(documents == null) {
 			return new InvertedList();
@@ -147,9 +143,7 @@ public class InvertedIndex implements DocumentIndex {
 	}
 	
 	public static InvertedIndex loadFromFile(File file) throws IOException, ParseException {
-		InvertedIndex result = InvertedIndexSerializer.fromStream(new FileInputStream(file));
-		result.calculatedInitialScoring = true;
-		return result;
+		return InvertedIndexSerializer.fromStream(new FileInputStream(file));
 	}
 	
 	private InvertedList addToIndex(String word, int documentNumber) {

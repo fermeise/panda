@@ -57,6 +57,7 @@ public class InvertedIndexSerializer {
 		try {
 			index.maxDocumentId = stream.readInt();
 			index.totalDocumentLength = stream.readLong();
+			index.calculatedInitialScoring = true;
 			
 			int obsoleteDocumentCount = stream.readInt();
 			for(int i = 0; i < obsoleteDocumentCount; i++) {
