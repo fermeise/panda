@@ -28,6 +28,7 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			this.connection = DriverManager.getConnection("jdbc:sqlite:" + libraryFile);
+			connection.setAutoCommit(false);
 			
 			Statement statement = connection.createStatement();
 			statement.executeUpdate("create table if not exists documents (id integer primary key, " +
@@ -63,6 +64,15 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 			removeDocumentStmt.executeUpdate();
 		} catch(SQLException e) {
 			log.warning("Could not remove document with id=" + id + ".");
+		}
+	}
+	
+	@Override
+	public void commitChanges() {
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			log.warning("Could not commit changes.");
 		}
 	}
 

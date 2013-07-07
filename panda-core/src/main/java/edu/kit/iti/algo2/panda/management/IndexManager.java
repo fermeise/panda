@@ -39,6 +39,7 @@ public class IndexManager {
 			index = new InvertedIndex();
 			FileSystemCrawler crawler = new FileSystemCrawler(storage, index);
 			crawler.crawl(documentPath);
+			storage.commitChanges();
 			index.initialScoring();
 			System.out.println("Saving index...");
 			index.saveToFile(indexFile);

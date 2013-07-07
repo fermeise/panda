@@ -12,13 +12,15 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
-import edu.kit.iti.algo2.panda.indexing.WikipediaArticle;
+import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
 
 public class TestPerformance {
 	@Test
+	@Ignore
 	public void testPerformance() throws IOException {
 		long begin, end;
 		
@@ -28,14 +30,14 @@ public class TestPerformance {
 		System.out.println("Reading articles: " + (end - begin) + " ms");
 		
 		// Panda
-				begin = System.currentTimeMillis();
-				InvertedIndex documents = new InvertedIndex();
-				for(WikipediaArticle article: articles) {
-					documents.addDocument(article);
-				}
-				documents.initialScoring();
-				end = System.currentTimeMillis();
-				System.out.println("Panda: " + (end - begin) + " ms");
+		begin = System.currentTimeMillis();
+		InvertedIndex documents = new InvertedIndex();
+		for(WikipediaArticle article: articles) {
+			documents.addDocument(article);
+		}
+		documents.initialScoring();
+		end = System.currentTimeMillis();
+		System.out.println("Panda: " + (end - begin) + " ms");
 		
 		// Lucene
 		begin = System.currentTimeMillis();

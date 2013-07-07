@@ -7,18 +7,24 @@ import edu.kit.iti.algo2.panda.indexing.Document;
  */
 public interface DocumentStorage {
 	/**
-	 * Add a document to the library.
+	 * Add a document to the library. The change is only made persistent after
+	 * commitChanges() has been called.
 	 * @param id The id of the document. The first valid id is 0. The id has to be unique.
 	 * @param document The document to be added to the library.
 	 */
 	public void addDocument(int id, Document document);
 	
 	/**
-	 * Add a document to the library.
+	 * Removes a document from the library. The change is only made persistent after
+	 * commitChanges() has been called.
 	 * @param id The id of the document. The first valid id is 0. The id has to be unique.
-	 * @param document The document to be added to the library.
 	 */
 	public void removeDocument(int id);
+	
+	/**
+	 * Commits all changes made to the storage.
+	 */
+	public void commitChanges();
 	
 	/**
 	 * Restore a document from the library.

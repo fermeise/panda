@@ -10,7 +10,7 @@ import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
-import edu.kit.iti.algo2.panda.indexing.WikipediaArticle;
+import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
 
 public class QueryWikipedia {
 	public static void main(String[] args) throws IOException {

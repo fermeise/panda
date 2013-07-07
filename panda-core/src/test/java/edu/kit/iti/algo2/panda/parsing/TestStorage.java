@@ -26,6 +26,7 @@ public class TestStorage {
 		
 		storage.addDocument(0, karlsruhe);
 		storage.addDocument(2, freiburg);
+		storage.commitChanges();
 		
 		assertEquals(karlsruhe.getContent(), storage.restoreDocument(0).getContent());
 		assertEquals(freiburg.getContent(), storage.restoreDocument(2).getContent());

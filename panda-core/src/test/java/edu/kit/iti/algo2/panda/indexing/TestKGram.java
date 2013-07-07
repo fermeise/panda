@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.*;
 
 import edu.kit.iti.algo2.panda.indexing.kgrams.KGramIndex;
+import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
 
 public class TestKGram {
 	

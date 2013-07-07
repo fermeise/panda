@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
 import edu.kit.iti.algo2.panda.parsing.GenericDocument;
 
 public class TestInvertedIndex {

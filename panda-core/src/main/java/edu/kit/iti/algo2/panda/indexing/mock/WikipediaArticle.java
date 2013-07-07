@@ -1,4 +1,4 @@
-package edu.kit.iti.algo2.panda.indexing;
+package edu.kit.iti.algo2.panda.indexing.mock;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import edu.kit.iti.algo2.panda.indexing.Document;
 
 public class WikipediaArticle implements Document {
 	private static final String sentenceFile = "../wikipedia-sentences.csv";
