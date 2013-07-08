@@ -33,9 +33,11 @@ public class TestStorage {
 		assertEquals(3, storage.getMaxDocumentId());
 		
 		storage.removeDocument(0);
+		storage.commitChanges();
 		assertEquals(3, storage.getMaxDocumentId());
 		
 		storage.addDocument(0, kit);
+		storage.commitChanges();
 		assertEquals(kit.getContent(), storage.restoreDocument(0).getContent());
 	}
 
