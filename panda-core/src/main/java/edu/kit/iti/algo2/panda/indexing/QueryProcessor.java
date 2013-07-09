@@ -1,5 +1,6 @@
 package edu.kit.iti.algo2.panda.indexing;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,9 +9,11 @@ import java.util.Scanner;
 
 public class QueryProcessor {
 	private DocumentIndex index;
+	private Font font;
 	
 	public QueryProcessor(DocumentIndex index) {
 		this.index = index;
+		this.font = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
 	}
 
 	public List<ScoredDocument> query(String query, int maxResultCount) {
@@ -74,8 +77,8 @@ public class QueryProcessor {
 						(end == content.length() || !Character.isAlphabetic(content.charAt(end))))) {
 			end--;
 		}
-		
-		return content.substring(begin, end).replace("\r\n", " ").replace("\n", " ");
+
+		return removeUnprintableCharacters(content.substring(begin, end)).replace("\r\n", " ").replace("\n", " ");
 	}
 	
 	private ArrayList<String> getWords(String query) {
@@ -88,5 +91,18 @@ public class QueryProcessor {
 		}
 		scanner.close();
 		return words;
+	}
+	
+	private String removeUnprintableCharacters(String str) {
+		char[] result = new char[str.length()];
+		int len = 0;
+		
+		for(char c: str.toCharArray()) {
+			if(font.canDisplay(c)) {
+				result[len++] = c;
+			}
+		}
+		
+		return new String(result);
 	}
 }
