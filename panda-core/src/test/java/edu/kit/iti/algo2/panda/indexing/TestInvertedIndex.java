@@ -48,9 +48,9 @@ public class TestInvertedIndex {
 		index.initialScoring();
 		
 		assertEquals(3, index.getDocumentCount());
-		assertThat(getDocumentIds(index.queryWord("university")), contains(0, 1, 2));
-		assertThat(getDocumentIds(index.queryWord("research")), contains(1, 2));
-		assertThat(getDocumentIds(index.queryWord("karlsruhe")), contains(0));
+		assertThat(getDocumentIds(index.queryWord("university")), containsInAnyOrder(0, 1, 2));
+		assertThat(getDocumentIds(index.queryWord("research")), containsInAnyOrder(1, 2));
+		assertThat(getDocumentIds(index.queryWord("karlsruhe")), containsInAnyOrder(0));
 	}
 	
 	@Test
@@ -64,25 +64,25 @@ public class TestInvertedIndex {
 		
 		assertEquals(3, index.getDocumentCount());
 		assertEquals(3, index.getMaxDocumentId());
-		assertThat(getDocumentIds(index.queryWord("university")), contains(0, 1, 2));
-		assertThat(getDocumentIds(index.queryWord("research")), contains(1, 2));
-		assertThat(getDocumentIds(index.queryWord("karlsruhe")), contains(0));
+		assertThat(getDocumentIds(index.queryWord("university")), containsInAnyOrder(0, 1, 2));
+		assertThat(getDocumentIds(index.queryWord("research")), containsInAnyOrder(1, 2));
+		assertThat(getDocumentIds(index.queryWord("karlsruhe")), containsInAnyOrder(0));
 		
 		index.removeDocument(0);
 		
 		assertEquals(2, index.getDocumentCount());
 		assertEquals(3, index.getMaxDocumentId());
-		assertThat(getDocumentIds(index.queryWord("university")), contains(1, 2));
-		assertThat(getDocumentIds(index.queryWord("research")), contains(1, 2));
+		assertThat(getDocumentIds(index.queryWord("university")), containsInAnyOrder(1, 2));
+		assertThat(getDocumentIds(index.queryWord("research")), containsInAnyOrder(1, 2));
 		assertThat(getDocumentIds(index.queryWord("karlsruhe")), empty());
 		
 		assertEquals(3, index.addDocument(kit));
 		
 		assertEquals(3, index.getDocumentCount());
 		assertEquals(4, index.getMaxDocumentId());
-		assertThat(getDocumentIds(index.queryWord("university")), contains(1, 2));
-		assertThat(getDocumentIds(index.queryWord("research")), contains(1, 2, 3));
-		assertThat(getDocumentIds(index.queryWord("karlsruhe")), contains(3));
+		assertThat(getDocumentIds(index.queryWord("university")), containsInAnyOrder(1, 2));
+		assertThat(getDocumentIds(index.queryWord("research")), containsInAnyOrder(1, 2, 3));
+		assertThat(getDocumentIds(index.queryWord("karlsruhe")), containsInAnyOrder(3));
 	}
 	
 	@Test
