@@ -1,7 +1,6 @@
 package edu.kit.iti.algo2.panda.indexing;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -86,10 +85,10 @@ public class InvertedList implements DocumentList {
 		for(int i = 0; i < documentCount; i++) {
 			scoredList.add(new ScoredDocument(documents[i], scores[i]));
 		}
-		// TODO: Implement partial sorting
-		Collections.sort(scoredList);
+		int resultCount = Math.min(maxResultCount, scoredList.size());
+		RankSorter.partialSort(scoredList, resultCount);
 		
-		return scoredList.subList(0, Math.min(maxResultCount, scoredList.size()));
+		return scoredList.subList(0, Math.min(maxResultCount, resultCount));
 	}
 	
 	public int getWordScore(InvertedIndex index) {

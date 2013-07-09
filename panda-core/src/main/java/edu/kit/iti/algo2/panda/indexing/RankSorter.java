@@ -6,11 +6,11 @@ import java.util.List;
 /**
  * Class to quickly sort list partially.
  */
-public class RankSorter<E extends Comparable<E>> {
+public class RankSorter<E extends Comparable<? super E>> {
 	
-	private final List<E> list;
+	protected final List<E> list;
 	
-	public RankSorter(List<E> list) {
+	protected RankSorter(List<E> list) {
 		this.list = list;
 	}
 	/**
@@ -21,7 +21,7 @@ public class RankSorter<E extends Comparable<E>> {
 	 * @param toIndex end of range (inclusive)
 	 * @param rank number of elements to sort
 	 */
-	public void partialSort(int fromIndex, int toIndex, int rank) {
+	protected void partialSort(int fromIndex, int toIndex, int rank) {
 		if (fromIndex > toIndex) return;
 	    E pivot = list.get((fromIndex + toIndex) / 2);
 		int i = fromIndex, j = toIndex;
@@ -49,9 +49,8 @@ public class RankSorter<E extends Comparable<E>> {
 	 * @param fromIndex begin of range (inclusive)
 	 * @param rank number of elements to sort
 	 */
-	public void partialSort(int fromIndex, int rank) {
+	protected void partialSort(int fromIndex, int rank) {
 		partialSort(fromIndex, list.size()-1, rank);
-		
 	}
 
 	/**
@@ -61,7 +60,19 @@ public class RankSorter<E extends Comparable<E>> {
 	 * @see RankSorter#partialSort(int, int, int)
 	 * @param rank number of elements to sort
 	 */
-	public void partialSort(int rank) {
+	protected void partialSort(int rank) {
 		partialSort(0, list.size()-1, rank);
 	}
+	
+	/**
+	 * Sorts {@link RankSorter#list} in-place sorting at most
+	 * <code>rank</code> numbers of elements.
+	 * 
+	 * @see RankSorter#partialSort(int, int, int)
+	 * @param rank number of elements to sort
+	 */
+    public static <T extends Comparable<? super T>> void partialSort(List<T> list, int rank) {
+    	RankSorter<T> sorter = new RankSorter<>(list);
+    	sorter.partialSort(rank);
+    }
 }
