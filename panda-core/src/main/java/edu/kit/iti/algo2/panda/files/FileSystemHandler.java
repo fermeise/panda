@@ -5,5 +5,5 @@ import java.nio.file.Path;
 public interface FileSystemHandler {
 	public boolean fileMatches(Path path);
 	public int addDocument(Path path);
-	public void documentRemoved(int documentId);
+	public void documentRemoved(Path path, int documentId);
 }

@@ -110,8 +110,8 @@ public class TestInvertedIndex {
 		}
 	}
 	
-	public static List<Integer> getDocumentIds(DocumentList list) {
-		List<ScoredDocument> documents = list.bestResults(Integer.MAX_VALUE);
+	public static List<Integer> getDocumentIds(InvertedList list) {
+		List<ScoredDocument> documents = list.rankResults(Integer.MAX_VALUE);
 		ArrayList<Integer> result = new ArrayList<Integer>();
 		for(ScoredDocument doc: documents) {
 			result.add(doc.getId());

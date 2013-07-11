@@ -150,8 +150,8 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	}
 
 	@Override
-	public void documentRemoved(int documentId) {
-		log.info(Integer.toString(documentId));
+	public void documentRemoved(Path path, int documentId) {
+		log.info(path.toString());
 		index.removeDocument(documentId);
 		storage.removeDocument(documentId);
 	}

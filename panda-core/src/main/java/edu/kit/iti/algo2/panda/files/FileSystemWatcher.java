@@ -156,7 +156,7 @@ public class FileSystemWatcher {
 	
 	private void removeFile(Path path) {
 		FileSystemEntry entry = files.get(path);
-		handler.documentRemoved(entry.getId());
+		handler.documentRemoved(path, entry.getId());
 		files.remove(path);
 	}
 	

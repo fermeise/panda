@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 public class QueryProcessor {
 	private static Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
@@ -15,23 +14,29 @@ public class QueryProcessor {
 		this.index = index;
 	}
 
-	public List<ScoredDocument> query(String query, int maxResultCount) {
-		ArrayList<String> words = getWords(query);
-		
-		if(words.isEmpty()) {
+	public List<ScoredDocument> query(String queryString, int maxResultCount) {
+		Query query = new Query(queryString);
+	
+		if(query.getIncludedWords().isEmpty()) {
 			return new ArrayList<ScoredDocument>();
 		}
 		
-		Iterator<String> it = words.iterator();
+		Iterator<String> it = query.getIncludedWords().iterator();
 		InvertedList result = index.queryWord(it.next());
 		while(it.hasNext()) {
 			result = result.intersect(index.queryWord(it.next()));
 		}
-		return result.bestResults(maxResultCount);
+		
+		it = query.getExcludedWords().iterator();
+		while(it.hasNext()) {
+			result = result.remove(index.queryWord(it.next()));
+		}
+		
+		return result.rankResults(maxResultCount);
 	}
 
-	public String extractSnippet(Document document, String query, int maxSnippetSize) {
-		ArrayList<String> words = getWords(query);
+	public String extractSnippet(Document document, String queryString, int maxSnippetSize) {
+		Query query = new Query(queryString);
 		String content = document.getContent();
 		
 		int bestMatchBegin = 0;
@@ -45,7 +50,7 @@ public class QueryProcessor {
 		WordIterator it = new WordIterator(content);
 		while(it.hasNext()) {
 			TextOccurrence current = it.next();
-			if(words.contains(current.getText())) {
+			if(query.getIncludedWords().contains(current.getText())) {
 				match.add(current);
 				matchScore += index.getWordScore(current.getText());
 			}
@@ -78,18 +83,6 @@ public class QueryProcessor {
 		}
 
 		return removeUnprintableCharacters(content.substring(begin, end)).replace("\r\n", " ").replace("\n", " ");
-	}
-	
-	private ArrayList<String> getWords(String query) {
-		ArrayList<String> words = new ArrayList<>();
-		
-		Scanner scanner = new Scanner(query);
-		scanner.useDelimiter(" ");
-		while(scanner.hasNext()) {
-			words.add(WordIterator.normalizeWord(scanner.next()));
-		}
-		scanner.close();
-		return words;
 	}
 	
 	private String removeUnprintableCharacters(String str) {

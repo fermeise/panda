@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 import edu.kit.iti.algo2.panda.util.RankSorter;
 
-public class InvertedList implements DocumentList {
+public class InvertedList {
 	private static final int initialSpace = 16;
 	private static final float k = 1.75f;
 	private static final float b = 0.75f;
@@ -80,9 +80,8 @@ public class InvertedList implements DocumentList {
 		float tf = (float)scores[i] * (k + 1.0f) / (k * alpha + scores[i]);
 		this.scores[i] = (int)(tf * idf * 256.f);
 	}
-	
-	@Override
-	public List<ScoredDocument> bestResults(int maxResultCount) {
+
+	public List<ScoredDocument> rankResults(int maxResultCount) {
 		ArrayList<ScoredDocument> scoredList = new ArrayList<ScoredDocument>();
 		for(int i = 0; i < documentCount; i++) {
 			scoredList.add(new ScoredDocument(documents[i], scores[i]));
@@ -110,6 +109,28 @@ public class InvertedList implements DocumentList {
 				indexA++;
 				indexB++;
 			}
+		}
+		
+		return result;
+	}
+
+	public InvertedList remove(InvertedList b) {
+		InvertedList result = new InvertedList();
+		int indexA = 0, indexB = 0;
+		while(indexA < this.documentCount && indexB < b.documentCount) {
+			if(this.documents[indexA] < b.documents[indexB]) {
+				result.add(this.documents[indexA], this.scores[indexA]);
+				indexA++;
+			} else if(this.documents[indexA] > b.documents[indexB]) {
+				indexB++;
+			} else {
+				indexA++;
+				indexB++;
+			}
+		}
+		while(indexA < this.documentCount) {
+			result.add(this.documents[indexA], this.scores[indexA]);
+			indexA++;
 		}
 		
 		return result;
