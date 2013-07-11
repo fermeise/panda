@@ -3,17 +3,20 @@ package edu.kit.iti.algo2.panda.indexing;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.kit.iti.algo2.panda.indexing.kgrams.KGramIndex;
+import edu.kit.iti.algo2.panda.indexing.kgrams.LevinshteinDistance;
 import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
 
 public class TestKGram {
@@ -131,11 +134,44 @@ public class TestKGram {
 		index.addAllWords(documents.getWords());
 		
 		long before = System.currentTimeMillis();
-		List<String> result = index.fuzzySearch(query, editDistance);
+		List<String> result = null;
+		for(int i = 0; i < 1000; i++) {
+			result = index.fuzzySearch(query, editDistance);
+		}
 		long timeTaken = System.currentTimeMillis() - before;
 		
 		System.out.format("Search for '%s' with %s results took %s ms.%n",
 				query, result.size(), timeTaken);
 	}
-
+	
+	@Test
+	public void testCorrect() throws IOException {
+		final String query = "class";
+		final int editDistance = 4;
+		
+		InvertedIndex documents = new InvertedIndex();
+		for (WikipediaArticle article : WikipediaArticle.loadArticles()) {
+			documents.addDocument(article);
+		}
+		KGramIndex index = new KGramIndex(3);
+		index.addAllWords(documents.getWords());
+		
+		HashSet<String> actual = new HashSet<String>(index.fuzzySearch(query, editDistance));
+		
+		HashSet<String> expected = new HashSet<String>();
+		for(String word: documents.getWords()) {
+			if(LevinshteinDistance.distance(query.toCharArray(), word.toCharArray()) <= editDistance) {
+				if(!actual.contains(word)) {
+					fail("Fuzzy search does not return '" + word + "'.");
+				}
+				expected.add(word);
+			}
+		}
+		
+		for(String word: actual) {
+			if(!expected.contains(word)) {
+				fail("Fuzzy search returns '" + word + "' but should not.");
+			}
+		}
+	}
 }
