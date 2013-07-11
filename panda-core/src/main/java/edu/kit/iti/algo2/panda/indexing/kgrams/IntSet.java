@@ -8,25 +8,21 @@ import java.util.List;
  * It is checked that the same value is not added twice.
  */
 public class IntSet {
-	private static final int initialSpace = 16;
+	private static final int INITIAL_SPACE = 16;
 	
 	private int[] elements;
 	private int elementCount;
 	
-	protected IntSet() {
-		this.elements = new int[initialSpace];
+	public IntSet() {
+		this.elements = new int[INITIAL_SPACE];
 		this.elementCount = 0;
 	}
 	
 	protected int[] getElements() {
 		return elements;
 	}
-	
-	public int getElementCount() {
-		return elementCount;
-	}
 
-	protected void add(int id) {
+	public void add(int id) {
 		if(elementCount > 0 && elements[elementCount - 1] == id) {
 			return;
 		}
@@ -41,6 +37,18 @@ public class IntSet {
 		elementCount++;
 	}
 	
+	public boolean isEmpty() {
+		return elementCount == 0;
+	}
+	
+	public int get(int index) {
+		return this.elements[index];
+	}
+	
+	public int size() {
+		return elementCount;
+	}
+	
 	public List<Integer> asList() {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for(int i = 0; i < elementCount; i++) {
@@ -48,5 +56,18 @@ public class IntSet {
 		}
 		
 		return list;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof IntSet && this.equals((IntSet)obj);
+	}
+	
+	public boolean equals(IntSet other) {
+		if (this.size() != other.size()) return false;
+		for (int i=0; i < this.size(); i++) {
+			if (this.get(i) != other.get(i)) return false;
+		}
+		return true;
 	}
 }
