@@ -22,6 +22,13 @@ public interface DocumentStorage {
 	public void removeDocument(int id);
 	
 	/**
+	 * Change the id of a stored document.
+	 * @param oldId The old id of the document.
+	 * @param newId The new id of the document.
+	 */
+	public void changeId(int oldId, int newId);
+	
+	/**
 	 * Commits all changes made to the storage.
 	 */
 	public void commitChanges();
@@ -37,4 +44,9 @@ public interface DocumentStorage {
 	 * @return the first unused document id. (often the last used document id + 1)
 	 */
 	public int getMaxDocumentId();
+
+	/**
+	 * Clear all stored documents and return to the initial state.
+	 */
+	public void reset();
 }

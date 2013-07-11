@@ -2,22 +2,21 @@ package edu.kit.iti.algo2.panda.parsing;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
-
+import java.nio.file.Paths;
 import org.junit.Test;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
 
 public class TestStorage {
 
-	public Document karlsruhe = new GenericDocument(new File("."), "Karlsruhe", "The University of Karlsruhe, " +
+	public Document karlsruhe = new GenericDocument(Paths.get("."), "Karlsruhe", "The University of Karlsruhe, " +
 			"also known as Fridericiana, was founded in 1825. It is located in the city of Karlsruhe, " +
 			"Germany, and is one of the most prestigious technical universities in Germany");
-	public Document freiburg = new GenericDocument(new File("."), "Freiburg", "The University of Freiburg (German " +
+	public Document freiburg = new GenericDocument(Paths.get("."), "Freiburg", "The University of Freiburg (German " +
 			"Albert-Ludwigs-Universität Freiburg, colloquially Uni Freiburg), sometimes referred to " +
 			"with its full title, the Albert Ludwig University of Freiburg, is a public research university " +
 			"located in Freiburg im Breisgau, Baden-Württemberg, Germany.");
-	public Document kit = new GenericDocument(new File("."), "KIT", "The Karlsruhe Institute of Technology (KIT) " +
+	public Document kit = new GenericDocument(Paths.get("."), "KIT", "The Karlsruhe Institute of Technology (KIT) " +
 			"is one of the largest and most prestigious research and education institutions in Germany.");
 	
 	@Test

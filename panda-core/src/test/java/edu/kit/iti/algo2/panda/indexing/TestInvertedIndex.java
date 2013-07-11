@@ -87,7 +87,7 @@ public class TestInvertedIndex {
 	
 	@Test
 	@Ignore
-	public void testInvertedIndex() throws IOException {
+	public void testWikipedia() throws IOException {
 		ArrayList<WikipediaArticle> entries = WikipediaArticle.loadArticles();
 		
 		InvertedIndex documents = new InvertedIndex();

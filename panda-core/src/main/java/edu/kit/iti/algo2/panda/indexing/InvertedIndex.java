@@ -21,7 +21,8 @@ public class InvertedIndex implements DocumentIndex {
 	protected int[] documentLength;
 	protected long totalDocumentLength;
 	protected int maxDocumentId;
-	protected boolean calculatedInitialScoring;	
+	protected boolean calculatedInitialScoring;
+	protected int documentsAddedSinceScoring;
 	
 	public InvertedIndex() {
 		this.invertedIndex = new HashMap<String, InvertedList>();
@@ -30,6 +31,7 @@ public class InvertedIndex implements DocumentIndex {
 		this.totalDocumentLength = 0;
 		this.maxDocumentId = 0;
 		this.calculatedInitialScoring = false;
+		this.documentsAddedSinceScoring = 0;
 	}
 
 	public int addDocument(Document document) {
@@ -66,6 +68,7 @@ public class InvertedIndex implements DocumentIndex {
 			while(it.hasNext()) {
 				it.next().scoreLast(this);
 			}
+			documentsAddedSinceScoring++;
 		} else {
 			int pos = 0;
 			while(pos < content.length) {
@@ -122,6 +125,18 @@ public class InvertedIndex implements DocumentIndex {
 	@Override
 	public int getMaxDocumentId() {
 		return maxDocumentId;
+	}
+	
+	public boolean isScored() {
+		return calculatedInitialScoring;
+	}
+	
+	public boolean needsRebuild() {
+		// Index needs rebuilt if the obsolete document list is
+		// larger than the average inverted list
+		return obsoleteDocuments.size() >
+			(totalDocumentLength / (long)invertedIndex.size()) ||
+			documentsAddedSinceScoring * 4 > maxDocumentId;
 	}
 	
 	@Override

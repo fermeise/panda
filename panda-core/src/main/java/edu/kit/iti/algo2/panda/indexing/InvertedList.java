@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import edu.kit.iti.algo2.panda.util.RankSorter;
+
 public class InvertedList implements DocumentList {
 	private static final int initialSpace = 16;
 	private static final float k = 1.75f;
@@ -92,7 +94,7 @@ public class InvertedList implements DocumentList {
 	}
 	
 	public int getWordScore(InvertedIndex index) {
-		return binaryLog(index.maxDocumentId / documentCount) * 256;
+		return binaryLog(index.maxDocumentId / documentCount) + 1;
 	}
 
 	public InvertedList intersect(InvertedList b) {

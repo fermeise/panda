@@ -1,6 +1,6 @@
 package edu.kit.iti.algo2.panda.parsing;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,6 +22,7 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 	private PreparedStatement addDocumentStmt;
 	private PreparedStatement retrieveDocumentStmt;
 	private PreparedStatement removeDocumentStmt;
+	private PreparedStatement changeIdStmt;
 	private PreparedStatement getDocumentCountStmt;
 	
 	public SQLiteDocumentStorage(String libraryFile) {
@@ -36,6 +37,7 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 			addDocumentStmt = connection.prepareStatement("insert into documents (id, file, title, content) values (? + 1, ?, ?, ?)");
 			retrieveDocumentStmt = connection.prepareStatement("select file, title, content from documents where id=? + 1");
 			removeDocumentStmt = connection.prepareStatement("delete from documents where id=? + 1");
+			changeIdStmt = connection.prepareStatement("update documents set id=? + 1 where id=? + 1");
 			getDocumentCountStmt = connection.prepareStatement("select max(id) from documents");
 		} catch (ClassNotFoundException e) {
 			log.severe("SQLite JDBC driver not found.");
@@ -48,7 +50,7 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 	public void addDocument(int id, Document document) {
 		try {
 			addDocumentStmt.setInt(1, id);
-			addDocumentStmt.setString(2, document.getFile().getAbsolutePath());
+			addDocumentStmt.setString(2, document.getFile().toString());
 			addDocumentStmt.setString(3, document.getTitle());
 			addDocumentStmt.setString(4, document.getContent());
 			addDocumentStmt.executeUpdate();
@@ -67,6 +69,19 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 		}
 	}
 	
+
+	@Override
+	public void changeId(int oldId, int newId) {
+		try {
+			changeIdStmt.setInt(1, newId);
+			changeIdStmt.setInt(2, oldId);
+			
+			changeIdStmt.executeUpdate();
+		} catch(SQLException e) {
+			log.warning("Could not change document id with id=" + oldId + ".");
+		}
+	}
+	
 	@Override
 	public void commitChanges() {
 		try {
@@ -76,13 +91,14 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 		}
 	}
 
+	@Override
 	public Document restoreDocument(int id) {
 		try {
 			retrieveDocumentStmt.setInt(1, id);
 		
 			ResultSet rs = retrieveDocumentStmt.executeQuery();
 			if(rs.next()) {
-				return new GenericDocument(new File(rs.getString(1)), rs.getString(2), rs.getString(3));
+				return new GenericDocument(Paths.get(rs.getString(1)), rs.getString(2), rs.getString(3));
 			}
 		} catch (SQLException e) {
 			log.warning("Could not retrieve document with id=" + id + ".");
@@ -99,9 +115,19 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 				return rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			log.warning("Could not retrieve document count.");
+			log.warning("Could not retrieve max document id.");
 		}
 		
 		return 0;
+	}
+	
+	@Override
+	public void reset() {
+		try {
+			Statement stmt = connection.createStatement();
+			stmt.execute("delete from documents");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

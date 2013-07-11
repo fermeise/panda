@@ -1,10 +1,11 @@
 package edu.kit.iti.algo2.panda.indexing.mock;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
@@ -20,8 +21,8 @@ public class WikipediaArticle implements Document {
 	}
 	
 	@Override
-	public File getFile() {
-		return new File(sentenceFile);
+	public Path getFile() {
+		return Paths.get(sentenceFile);
 	}
 	
 	@Override

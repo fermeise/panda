@@ -1,7 +1,7 @@
 package edu.kit.iti.algo2.panda.parsing;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
 
@@ -15,5 +15,5 @@ public interface DocumentFactory {
 	 * @return The parsed document.
 	 * @throws IOException If the file could not be read.
 	 */
-	public Document createDocument(File file) throws IOException;
+	public Document createDocument(Path file) throws IOException;
 }

@@ -6,35 +6,27 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
-import edu.kit.iti.algo2.panda.indexing.DocumentIndex;
-import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
-import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
-import edu.kit.iti.algo2.panda.management.IndexManager;
-import edu.kit.iti.algo2.panda.parsing.DocumentStorage;
+import edu.kit.iti.algo2.panda.management.IndexFacade;
 
 public class QueryModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = -968307538266585151L;
 	private static final int numberOfResults = 50;
 
-	private final DocumentStorage documentStorage;
-	private final DocumentIndex documentIndex;
-	private final QueryProcessor processor;
+	private final IndexFacade index;
 	
 	private String query;
-	private List<ScoredDocument> result;
+	private List<Document> result;
 	
-	public QueryModel(IndexManager manager) {
-		this.documentStorage = manager.getDocumentStorage();
-		this.documentIndex = manager.getDocumentIndex();
-		this.processor = new QueryProcessor(documentIndex);
+	public QueryModel(IndexFacade index) {
+		this.index = index;
 		
 		this.query = "";
 		this.result = Collections.emptyList();
 	}
 	
 	public void setQuery(String queryString) {
-		List<ScoredDocument> oldResult = this.result;
-		List<ScoredDocument> newResult = processor.query(queryString, numberOfResults);
+		List<Document> oldResult = this.result;
+		List<Document> newResult = index.query(queryString, numberOfResults);
 		if (!oldResult.isEmpty()) {
 			this.fireIntervalRemoved(this, 0, oldResult.size()-1);
 		}
@@ -51,9 +43,12 @@ public class QueryModel extends AbstractListModel<String> {
 	}
 
 	@Override
-	public String getElementAt(int index) {
-		Document document = documentStorage.restoreDocument(result.get(index).getId());
-		return document.getTitle() + ": " + processor.extractSnippet(document, documentIndex, query, 100);
+	public String getElementAt(int idx) {
+		Document document = result.get(idx);
+		return document.getTitle() + ": " + index.extractSnippet(document, query, 100);
 	}
 
+	public void close() {
+		index.close();
+	}
 }

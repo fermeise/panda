@@ -1,6 +1,6 @@
 package edu.kit.iti.algo2.panda.indexing;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * A representation of an indexed document.
@@ -10,7 +10,7 @@ public interface Document {
 	/**
 	 * @return The file from which the document originates.
 	 */
-	public File getFile();
+	public Path getFile();
 	
 	/**
 	 * @return The title of the document.

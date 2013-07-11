@@ -1,10 +1,10 @@
-package edu.kit.iti.algo2.panda.indexing;
+package edu.kit.iti.algo2.panda.util;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Class to quickly sort list partially.
+ * Class to quickly sort a list partially.
  */
 public class RankSorter<E extends Comparable<? super E>> {
 	
@@ -13,9 +13,10 @@ public class RankSorter<E extends Comparable<? super E>> {
 	protected RankSorter(List<E> list) {
 		this.list = list;
 	}
+	
 	/**
 	 * Sorts {@link RankSorter#list} in-place sorting at most
-	 * <code>rank</code> numbers of elements.
+	 * <code>rank</code> elements.
 	 * 
 	 * @param fromIndex begin of range (inclusive)
 	 * @param toIndex end of range (inclusive)
@@ -40,7 +41,7 @@ public class RankSorter<E extends Comparable<? super E>> {
 			partialSort(i, toIndex, rank + fromIndex - i);
 		}
 	}
-
+	
 	/**
 	 * Sorts {@link RankSorter#list} in-place sorting at most
 	 * <code>rank</code> numbers of elements.
@@ -52,10 +53,10 @@ public class RankSorter<E extends Comparable<? super E>> {
 	protected void partialSort(int fromIndex, int rank) {
 		partialSort(fromIndex, list.size()-1, rank);
 	}
-
+	
 	/**
-	 * Sorts {@link RankSorter#list} in-place sorting at most
-	 * <code>rank</code> numbers of elements.
+	 * Sorts {@link RankSorter#list} in-place so that the first <code>rank</code>
+	 * elements in the list are the smallest ones in ascending order.
 	 * 
 	 * @see RankSorter#partialSort(int, int, int)
 	 * @param rank number of elements to sort
@@ -65,10 +66,10 @@ public class RankSorter<E extends Comparable<? super E>> {
 	}
 	
 	/**
-	 * Sorts {@link RankSorter#list} in-place sorting at most
-	 * <code>rank</code> numbers of elements.
+	 * Sorts <code>list</code> in-place so that the first <code>rank</code>
+	 * elements in the list are the smallest ones in ascending order.
 	 * 
-	 * @see RankSorter#partialSort(int, int, int)
+	 * @see RankSorter#partialSort(int)
 	 * @param rank number of elements to sort
 	 */
     public static <T extends Comparable<? super T>> void partialSort(List<T> list, int rank) {

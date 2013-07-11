@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class QueryProcessor {
+	private static Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
 	private DocumentIndex index;
-	private Font font;
 	
 	public QueryProcessor(DocumentIndex index) {
 		this.index = index;
-		this.font = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
 	}
 
 	public List<ScoredDocument> query(String query, int maxResultCount) {
@@ -31,7 +30,7 @@ public class QueryProcessor {
 		return result.bestResults(maxResultCount);
 	}
 
-	public String extractSnippet(Document document, DocumentIndex index, String query, int maxSnippetSize) {
+	public String extractSnippet(Document document, String query, int maxSnippetSize) {
 		ArrayList<String> words = getWords(query);
 		String content = document.getContent();
 		

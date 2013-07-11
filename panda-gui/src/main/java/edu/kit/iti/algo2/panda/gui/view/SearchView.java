@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -27,10 +29,14 @@ public class SearchView {
 	private final static int RESULT_HORIZONTAL_SCROLLBAR = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 	
 	private final JFrame root = new JFrame("PANDA Search");
-	
 	{
 		root.setLayout(new BorderLayout());
 		root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		root.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				model.close();
+			}
+		});
 	}
 	
 	private final JMenuBar topMenu = new JMenuBar();

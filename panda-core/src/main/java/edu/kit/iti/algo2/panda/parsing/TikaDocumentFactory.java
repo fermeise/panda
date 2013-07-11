@@ -1,7 +1,7 @@
 package edu.kit.iti.algo2.panda.parsing;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
@@ -18,11 +18,12 @@ public class TikaDocumentFactory implements DocumentFactory {
 	private TikaDocumentFactory() {
 	}
 	
-	public Document createDocument(File file) throws IOException {
-		String title = file.getName();
+	@Override
+	public Document createDocument(Path file) throws IOException {
+		String title = file.getFileName().toString();
 		String content;
 		try {
-			content = tika.parseToString(file);
+			content = tika.parseToString(file.toFile());
 		} catch (TikaException e) {
 			throw new IOException(e);
 		}

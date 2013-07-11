@@ -1,4 +1,4 @@
-package edu.kit.iti.algo2.panda.indexing;
+package edu.kit.iti.algo2.panda.util;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -9,6 +9,8 @@ import java.util.Random;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
+import edu.kit.iti.algo2.panda.util.RankSorter;
 
 
 public class TestRankSorter {
