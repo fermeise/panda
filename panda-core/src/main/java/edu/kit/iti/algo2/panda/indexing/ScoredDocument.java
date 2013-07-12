@@ -8,12 +8,23 @@ public class ScoredDocument implements Comparable<ScoredDocument> {
 		this.id = id;
 		this.score = score;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof ScoredDocument &&
+				score == ((ScoredDocument)o).score;
+	}
 
 	@Override
 	public int compareTo(ScoredDocument other) {
 		if(score < other.score) return 1;
 		if(score > other.score) return -1;
 		return 0;
+	}
+	
+	@Override
+	public int hashCode() {
+		return score;
 	}
 
 	public int getId() {

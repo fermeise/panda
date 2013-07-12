@@ -34,6 +34,7 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate("create table if not exists documents (id integer primary key, " +
 					"file text, title text, content text) ");
+			statement.close();
 			addDocumentStmt = connection.prepareStatement("insert into documents (id, file, title, content) values (? + 1, ?, ?, ?)");
 			retrieveDocumentStmt = connection.prepareStatement("select file, title, content from documents where id=? + 1");
 			removeDocumentStmt = connection.prepareStatement("delete from documents where id=? + 1");
@@ -98,7 +99,9 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 		
 			ResultSet rs = retrieveDocumentStmt.executeQuery();
 			if(rs.next()) {
-				return new GenericDocument(Paths.get(rs.getString(1)), rs.getString(2), rs.getString(3));
+				GenericDocument result = new GenericDocument(Paths.get(rs.getString(1)), rs.getString(2), rs.getString(3));
+				rs.close();
+				return result;
 			}
 		} catch (SQLException e) {
 			log.warning("Could not retrieve document with id=" + id + ".");
@@ -112,7 +115,9 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 		try {
 			ResultSet rs = getDocumentCountStmt.executeQuery();
 			if(rs.next()) {
-				return rs.getInt(1);
+				int result = rs.getInt(1);
+				rs.close();
+				return result;
 			}
 		} catch (SQLException e) {
 			log.warning("Could not retrieve max document id.");
@@ -126,6 +131,7 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 		try {
 			Statement stmt = connection.createStatement();
 			stmt.execute("delete from documents");
+			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -62,12 +62,4 @@ public class IntSet {
 	public boolean equals(Object obj) {
 		return obj instanceof IntSet && this.equals((IntSet)obj);
 	}
-	
-	public boolean equals(IntSet other) {
-		if (this.size() != other.size()) return false;
-		for (int i=0; i < this.size(); i++) {
-			if (this.get(i) != other.get(i)) return false;
-		}
-		return true;
-	}
 }
