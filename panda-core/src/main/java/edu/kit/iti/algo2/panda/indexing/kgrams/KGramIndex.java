@@ -47,11 +47,9 @@ public class KGramIndex {
 	 * @param word
 	 */
 	public void addWord(String word) {
-		if(word.length() < k)
-			return;
-
-		int wordIdx = words.size();
 		Iterator<String> iterator = new KGramIterator(word, k);
+		if (!iterator.hasNext()) return;
+		int wordIdx = words.size();
 		while (iterator.hasNext()) {
 			String kgram = iterator.next();
 			IntSet wordList = index.get(kgram);
@@ -79,11 +77,12 @@ public class KGramIndex {
 	}
 	
 	/**
-	 * Search for all words which are less or equal the edit distance.
+	 * Search for all words which have at least one k-gram in common
+	 * with the query word and which are less or equal the edit distance.
 	 * 
 	 * @param word the query word to search for.
 	 * @param editDistance the maximal number of transformations to perform.
-	 * @return a list a of words that matches the edit distance.
+	 * @return a list a of words that matches the above criterion.
 	 */
 	public List<String> fuzzySearch(String word, int editDistance) {
 		Iterator<String> iterator = new KGramIterator(word, k);
@@ -96,16 +95,33 @@ public class KGramIndex {
 			}
 		}
 		List<String> result = new LinkedList<>();
-		final int treshold = k - 1 - k * editDistance;
 		for (int i=0; i < allKgrams.size(); i++) {
 			int currentWordIndex = allKgrams.getElement(i);
 			int commonSize = allKgrams.getCount(i);
 			String candidate = words.get(currentWordIndex);
-			if (commonSize >= Math.max(word.length(), candidate.length()) + treshold) {
-				int actualDistance = LevinshteinDistance.distance(candidate.toCharArray(), word.toCharArray());
+			int threshold = Math.max(word.length(), candidate.length()) - k + 1 - k * editDistance;
+			if (commonSize >= threshold) {
+				int actualDistance = LevenshteinDistance.distance(candidate.toCharArray(), word.toCharArray());
 				if (actualDistance <= editDistance) {
 					result.add(candidate);
 				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Search for all words which are less or equal the edit distance.
+	 * 
+	 * @param word the query word to search for.
+	 * @param editDistance the maximal number of transformations to perform.
+	 * @return a list a of words that matches the above criterion.
+	 */
+	public List<String> exactSearch(String word, int editDistance) {
+		List<String> result = new LinkedList<>();
+		for (String candidate : words) {
+			if (LevenshteinDistance.smallerOrEqualThan(candidate.toCharArray(), word.toCharArray(), editDistance)) {
+				result.add(candidate);
 			}
 		}
 		return result;
