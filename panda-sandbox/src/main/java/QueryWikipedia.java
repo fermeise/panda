@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
+import edu.kit.iti.algo2.panda.indexing.Query;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
 import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
@@ -41,8 +42,9 @@ public class QueryWikipedia {
 		QueryProcessor queryProcessor = new QueryProcessor(documents);
 		Scanner scanner = new Scanner(System.in);
 		
-		String query = scanner.nextLine();
-		while(query != "") {
+		String queryString = scanner.nextLine();
+		while(queryString != "") {
+			Query query = new Query(queryString);
 			List<ScoredDocument> result = queryProcessor.query(query, 50);
 			for(int i = 0; i < 10 && i < result.size(); i++) {
 				Document document = entries.get(result.get(i).getId());
@@ -52,7 +54,7 @@ public class QueryWikipedia {
 				System.out.println(queryProcessor.extractSnippet(document, query, 100));
 			}
 			System.out.println("");
-			query = scanner.nextLine();
+			queryString = scanner.nextLine();
 		}
 		scanner.close();
 	}

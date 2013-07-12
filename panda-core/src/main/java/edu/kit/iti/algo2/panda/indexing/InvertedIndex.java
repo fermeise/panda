@@ -132,11 +132,10 @@ public class InvertedIndex implements DocumentIndex {
 	}
 	
 	public boolean needsRebuild() {
-		// Index needs rebuilt if the obsolete document list is
-		// larger than the average inverted list
-		return obsoleteDocuments.size() >
-			(totalDocumentLength / (long)invertedIndex.size()) ||
-			documentsAddedSinceScoring * 4 > maxDocumentId;
+		final float avgInvertedListLength =
+				(totalDocumentLength / (long)invertedIndex.size());
+		return obsoleteDocuments.size() > avgInvertedListLength ||
+			documentsAddedSinceScoring > getDocumentCount() / 2;
 	}
 	
 	@Override

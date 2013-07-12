@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
+import edu.kit.iti.algo2.panda.indexing.Query;
 
 public interface IndexFacade {
 	/**
@@ -26,7 +27,7 @@ public interface IndexFacade {
 	 * @param maxResultCount The maximum number of results to be returned.
 	 * @return The documents matching the query sorted by relevance.
 	 */
-	public List<Document> query(String query, int maxResultCount);
+	public List<Document> query(Query query, int maxResultCount);
 	
 	/**
 	 * Generate a snippet for a document returned by a query.
@@ -35,7 +36,19 @@ public interface IndexFacade {
 	 * @param maxSnippetSize The maximum size of the snippet.
 	 * @return The generated snippet.
 	 */
-	public String extractSnippet(Document document, String query, int maxSnippetSize);
+	public String extractSnippet(Document document, Query query, int maxSnippetSize);
+	
+	/**
+	 * Checks whether the content of the watched directories has changed and
+	 * updates the index if necessary.
+	 */
+	public void update();
+	
+	/**
+	 * Rebuilds the index explicitly, so the obsolete files are no longer in
+	 * the index and the scores are updated. 
+	 */
+	public void rebuild();
 	
 	/**
 	 * Terminate the indexing process and store the index and all auxiliary

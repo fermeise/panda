@@ -53,14 +53,14 @@ public class SearchView {
 	private final JTextField searchField = new JTextField(30);
 	private final QueryModel model;
 	private final JList<String> searchResult = new JList<>();
-	
 	{
-		searchResult.setPreferredSize(new Dimension(100, 300));
 		centerPanel.add(searchField, BorderLayout.NORTH);
 		searchField.getDocument().addDocumentListener(new QueryDocumentListener());
 		searchField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
 		searchResult.setBorder(BorderFactory.createTitledBorder("Result:"));
-		JScrollPane searchResultWrapper = new JScrollPane(searchResult, RESULT_VERTICAL_SCROLLBAR, RESULT_HORIZONTAL_SCROLLBAR);
+		JScrollPane searchResultWrapper = new JScrollPane(searchResult,
+				RESULT_VERTICAL_SCROLLBAR, RESULT_HORIZONTAL_SCROLLBAR);
+		searchResultWrapper.setPreferredSize(new Dimension(800, 320));
 		centerPanel.add(searchResultWrapper, BorderLayout.CENTER);
 		root.add(centerPanel);
 	}

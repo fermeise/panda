@@ -12,6 +12,7 @@ import edu.kit.iti.algo2.panda.files.FileSystemHandler;
 import edu.kit.iti.algo2.panda.files.FileSystemWatcher;
 import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
+import edu.kit.iti.algo2.panda.indexing.Query;
 import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.indexing.ScoredDocument;
 import edu.kit.iti.algo2.panda.parsing.DocumentStorage;
@@ -58,10 +59,8 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	@Override
 	public void addDirectory(Path directory) {
 		fileWatcher.addDirectory(directory);
-		fileWatcher.update();
-		if(index.needsRebuild()) {
-			rebuild();
-		} else if(!index.isScored()) {
+		update();
+		if(!index.isScored()) {
 			log.info("Calculating initial scoring.");
 			index.initialScoring();
 		}
@@ -70,6 +69,11 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	@Override
 	public void removeDirectory(Path directory) {
 		fileWatcher.removeDirectory(directory);
+		update();
+	}
+	
+	@Override
+	public void update() {
 		fileWatcher.update();
 		if(index.needsRebuild()) {
 			rebuild();
@@ -95,7 +99,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	}
 	
 	@Override
-	public List<Document> query(String query, int maxResultCount) {
+	public List<Document> query(Query query, int maxResultCount) {
 		final List<ScoredDocument> queryResult = queryProcessor.query(query, maxResultCount);
 		
 		ArrayList<Document> documents = new ArrayList<Document>();
@@ -106,7 +110,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	}
 
 	@Override
-	public String extractSnippet(Document document, String query, int maxSnippetSize) {
+	public String extractSnippet(Document document, Query query, int maxSnippetSize) {
 		return queryProcessor.extractSnippet(document, query, maxSnippetSize);
 	}
 

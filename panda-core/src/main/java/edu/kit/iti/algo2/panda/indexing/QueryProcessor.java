@@ -2,6 +2,7 @@ package edu.kit.iti.algo2.panda.indexing;
 
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,9 +15,7 @@ public class QueryProcessor {
 		this.index = index;
 	}
 
-	public List<ScoredDocument> query(String queryString, int maxResultCount) {
-		Query query = new Query(queryString);
-	
+	public List<ScoredDocument> query(Query query, int maxResultCount) {
 		if(query.getIncludedWords().isEmpty()) {
 			return new ArrayList<ScoredDocument>();
 		}
@@ -35,14 +34,14 @@ public class QueryProcessor {
 		return result.rankResults(maxResultCount);
 	}
 
-	public String extractSnippet(Document document, String queryString, int maxSnippetSize) {
-		Query query = new Query(queryString);
+	public String extractSnippet(Document document, Query query, int maxSnippetSize) {
 		String content = document.getContent();
 		
 		int bestMatchBegin = 0;
 		int bestMatchEnd = 0;
 		int bestMatchScore = 0;
 
+		HashSet<String> matchedWords = new HashSet<String>();
 		LinkedList<TextOccurrence> match = new LinkedList<>();
 		int matchScore = 0;
 		
@@ -51,12 +50,15 @@ public class QueryProcessor {
 		while(it.hasNext()) {
 			TextOccurrence current = it.next();
 			if(query.getIncludedWords().contains(current.getText())) {
-				match.add(current);
-				matchScore += index.getWordScore(current.getText());
+				if(matchedWords.add(current.getText())) {
+					match.add(current);
+					matchScore += index.getWordScore(current.getText());
+				}
 			}
 			while(!match.isEmpty() &&
 					match.getLast().getPosition() + match.getLast().getText().length()
 					- match.getFirst().getPosition() > maxSnippetSize) {
+				matchedWords.remove(match.getFirst().getText());
 				matchScore -= index.getWordScore(match.getFirst().getText());
 				match.removeFirst();
 			}

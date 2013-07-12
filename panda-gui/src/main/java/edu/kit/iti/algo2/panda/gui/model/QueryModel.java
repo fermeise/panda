@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
+import edu.kit.iti.algo2.panda.indexing.Query;
 import edu.kit.iti.algo2.panda.management.IndexFacade;
 
 public class QueryModel extends AbstractListModel<String> {
@@ -14,24 +15,25 @@ public class QueryModel extends AbstractListModel<String> {
 
 	private final IndexFacade index;
 	
-	private String query;
+	private Query query;
 	private List<Document> result;
 	
 	public QueryModel(IndexFacade index) {
 		this.index = index;
 		
-		this.query = "";
+		this.query = null;
 		this.result = Collections.emptyList();
 	}
 	
 	public void setQuery(String queryString) {
+		Query query = new Query(queryString);
 		List<Document> oldResult = this.result;
-		List<Document> newResult = index.query(queryString, numberOfResults);
+		List<Document> newResult = index.query(query, numberOfResults);
 		if (!oldResult.isEmpty()) {
 			this.fireIntervalRemoved(this, 0, oldResult.size()-1);
 		}
 		this.result = newResult;
-		this.query = queryString;
+		this.query = query;
 		if (!newResult.isEmpty()) {
 			this.fireIntervalAdded(this, 0, newResult.size()-1);
 		}

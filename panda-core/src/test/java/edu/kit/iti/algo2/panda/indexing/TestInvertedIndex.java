@@ -97,15 +97,17 @@ public class TestInvertedIndex {
 		documents.initialScoring();
 		
 		QueryProcessor queryProcessor = new QueryProcessor(documents);
-		List<ScoredDocument> query = queryProcessor.query("Schrödinger cat", 100);
-		for(ScoredDocument doc: query) {
+		Query query = new Query("Schrödinger cat");
+		List<ScoredDocument> result = queryProcessor.query(query, 100);
+		for(ScoredDocument doc: result) {
 			System.out.println(doc.getScore() + " " + entries.get(doc.getId()).getTitle());
 		}
-		assertEquals(8, query.size());
+		assertEquals(8, result.size());
 		System.out.println("");
 		
-		query = queryProcessor.query("relativity theory", 100);
-		for(ScoredDocument doc: query) {
+		query = new Query("relativity theory");
+		result = queryProcessor.query(query, 100);
+		for(ScoredDocument doc: result) {
 			System.out.println(doc.getScore() + " " + entries.get(doc.getId()).getTitle());
 		}
 	}
