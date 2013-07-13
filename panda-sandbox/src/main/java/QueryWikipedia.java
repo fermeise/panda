@@ -24,7 +24,7 @@ public class QueryWikipedia {
 		System.out.println("Loading index...");
 		try {
 			documents = InvertedIndex.loadFromFile(indexFile);
-		} catch (ParseException e) {
+		} catch (ParseException | IOException e) {
 			System.out.println("Building index...");
 			documents = new InvertedIndex();
 			for(WikipediaArticle entry: entries) {

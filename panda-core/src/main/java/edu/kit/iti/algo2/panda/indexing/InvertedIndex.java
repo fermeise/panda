@@ -15,6 +15,7 @@ import java.util.TreeSet;
 public class InvertedIndex implements DocumentIndex {
 	protected static final int minimumWordLength = 2;
 	private static final int initialSpace = 16;
+	private static HashSet<String> stopWords = StopWords.getInstance().getWords();
 	
 	protected HashMap<String, InvertedList> invertedIndex;
 	protected TreeSet<Integer> obsoleteDocuments;
@@ -45,46 +46,35 @@ public class InvertedIndex implements DocumentIndex {
 			documentLength = newDocumentLength;
 		}
 		
-		if(calculatedInitialScoring) {
-			HashSet<InvertedList> wordsUsed = new HashSet<InvertedList>();
-			int pos = 0;
-			while(pos < content.length) {
-				while(pos < content.length && !isCharacter(content[pos])) pos++;
-				int wordBegin = pos;
-				while(pos < content.length && isCharacter(content[pos])) pos++;
-				int wordEnd = pos;
-				
-				int wordLength = wordEnd - wordBegin;
-				if(wordLength >= minimumWordLength) {
-					String word = normalizeWord(new String(content, wordBegin, wordLength));
-					InvertedList list = addToIndex(word, maxDocumentId);
-					wordsUsed.add(list);
+		HashSet<InvertedList> wordsUsed = new HashSet<InvertedList>();
+		int pos = 0;
+		while(pos < content.length) {
+			while(pos < content.length && !isCharacter(content[pos])) pos++;
+			int wordBegin = pos;
+			while(pos < content.length && isCharacter(content[pos])) pos++;
+			int wordEnd = pos;
+			
+			int wordLength = wordEnd - wordBegin;
+			if(wordLength >= minimumWordLength) {
+				String word = normalizeWord(new String(content, wordBegin, wordLength));
+				if(!stopWords.contains(word)) {
+					if(calculatedInitialScoring) {
+						wordsUsed.add(addToIndex(word, maxDocumentId));
+					} else {
+						addToIndex(word, maxDocumentId);
+					}
 					documentLength[maxDocumentId]++;
 				}
 			}
-			totalDocumentLength += documentLength[maxDocumentId];
-			
+		}
+		totalDocumentLength += documentLength[maxDocumentId];
+		
+		if(calculatedInitialScoring) {
 			Iterator<InvertedList> it = wordsUsed.iterator();
 			while(it.hasNext()) {
 				it.next().scoreLast(this);
 			}
 			documentsAddedSinceScoring++;
-		} else {
-			int pos = 0;
-			while(pos < content.length) {
-				while(pos < content.length && !isCharacter(content[pos])) pos++;
-				int wordBegin = pos;
-				while(pos < content.length && isCharacter(content[pos])) pos++;
-				int wordEnd = pos;
-				
-				int wordLength = wordEnd - wordBegin;
-				if(wordLength >= minimumWordLength) {
-					String word = normalizeWord(new String(content, wordBegin, wordLength));
-					addToIndex(word, maxDocumentId);
-					documentLength[maxDocumentId]++;
-				}
-			}
-			totalDocumentLength += documentLength[maxDocumentId];
 		}
 		
 		return maxDocumentId++;

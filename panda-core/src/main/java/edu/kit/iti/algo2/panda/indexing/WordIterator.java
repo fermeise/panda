@@ -1,9 +1,12 @@
 package edu.kit.iti.algo2.panda.indexing;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WordIterator implements Iterator<TextOccurrence> {
+	private static HashSet<String> stopWords = StopWords.getInstance().getWords();
+	
 	private final char[] content;
 	private int pos;
 	private TextOccurrence occurrence;
@@ -44,10 +47,12 @@ public class WordIterator implements Iterator<TextOccurrence> {
 			
 			int wordLength = wordEnd - wordBegin;
 			if(wordLength >= InvertedIndex.minimumWordLength) {
-				occurrence = new TextOccurrence(
-						InvertedIndex.normalizeWord(new String(content, wordBegin, wordLength)), wordBegin);
-				hasNext = true;
-				return;
+				final String word = InvertedIndex.normalizeWord(new String(content, wordBegin, wordLength));
+				if(!stopWords.contains(word)) {
+					occurrence = new TextOccurrence(word, wordBegin);
+					hasNext = true;
+					return;
+				}
 			}
 		}
 		hasNext = false;
