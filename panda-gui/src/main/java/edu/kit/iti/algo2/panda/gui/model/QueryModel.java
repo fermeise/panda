@@ -2,6 +2,7 @@ package edu.kit.iti.algo2.panda.gui.model;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -16,44 +17,53 @@ import edu.kit.iti.algo2.panda.management.StatusListener;
 public class QueryModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = -968307538266585151L;
 	private static final int numberOfResults = 50;
+	private static final int snippetLength = 140;
 
 	private final IndexFacade index;
 	private final HashMap<String, Path> fileViewer;
 	
-	private Query query;
-	private List<Document> result;
+	private List<Document> documents;
+	private List<String> snippets;
 	
 	public QueryModel(IndexFacade index, HashMap<String, Path> fileViewer) {
 		this.index = index;
 		this.fileViewer = fileViewer;
 		
-		this.query = null;
-		this.result = Collections.emptyList();
+		this.documents = Collections.emptyList();
+		this.snippets = Collections.emptyList();
 	}
 	
 	public void setQuery(String queryString) {
-		Query query = new Query(queryString);
-		List<Document> oldResult = this.result;
-		List<Document> newResult = index.query(query, numberOfResults);
-		if (!oldResult.isEmpty()) {
-			this.fireIntervalRemoved(this, 0, oldResult.size()-1);
+		final Query query = new Query(queryString);
+		final List<Document> newDocuments = index.query(query, numberOfResults);
+		final List<String> newSnippets = new ArrayList<String>();
+		for(Document document: newDocuments) {
+			newSnippets.add(index.extractSnippet(document, query, snippetLength));
 		}
-		this.result = newResult;
-		this.query = query;
-		if (!newResult.isEmpty()) {
-			this.fireIntervalAdded(this, 0, newResult.size()-1);
+		
+		synchronized(this) {
+			int oldSize = documents.size();
+			
+			this.documents = newDocuments;
+			this.snippets = newSnippets;
+			
+			if (oldSize > 0) {
+				this.fireIntervalRemoved(this, 0, oldSize - 1);
+			}
+			if (!newDocuments.isEmpty()) {
+				this.fireIntervalAdded(this, 0, newDocuments.size()-1);
+			}
 		}
 	}
 
 	@Override
-	public int getSize() {
-		return this.result.size();
+	public synchronized int getSize() {
+		return this.documents.size();
 	}
 
 	@Override
-	public String getElementAt(int idx) {
-		Document document = result.get(idx);
-		return document.getTitle() + ": " + index.extractSnippet(document, query, 100);
+	public synchronized String getElementAt(int idx) {
+		return documents.get(idx).getTitle() + ": " + snippets.get(idx);
 	}
 
 	public void close() {
@@ -64,9 +74,9 @@ public class QueryModel extends AbstractListModel<String> {
 		index.addStatusListener(statusListener);
 	}
 
-	public void viewDocument(int documentIndex) {
-		if(documentIndex >= 0 && documentIndex <= result.size()) {
-			Document document = result.get(documentIndex);
+	public synchronized void viewDocument(int documentIndex) {
+		if(documentIndex >= 0 && documentIndex <= documents.size()) {
+			Document document = documents.get(documentIndex);
 			String filename = document.getFile().getFileName().toString();
 			String extension = filename.substring(filename.lastIndexOf('.') + 1);
 			Path viewer = fileViewer.get(extension);

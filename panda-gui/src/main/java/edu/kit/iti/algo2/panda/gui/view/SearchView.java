@@ -63,7 +63,7 @@ public class SearchView {
 		searchResult.setBorder(BorderFactory.createTitledBorder("Result:"));
 		JScrollPane searchResultWrapper = new JScrollPane(searchResult,
 				RESULT_VERTICAL_SCROLLBAR, RESULT_HORIZONTAL_SCROLLBAR);
-		searchResultWrapper.setPreferredSize(new Dimension(800, 320));
+		searchResultWrapper.setPreferredSize(new Dimension(900, 320));
 		centerPanel.add(searchResultWrapper, BorderLayout.CENTER);
 		root.add(centerPanel);
 	}

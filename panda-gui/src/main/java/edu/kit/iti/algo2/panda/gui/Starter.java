@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import edu.kit.iti.algo2.panda.gui.model.AsyncQueryModel;
 import edu.kit.iti.algo2.panda.gui.model.QueryModel;
 import edu.kit.iti.algo2.panda.gui.view.SearchView;
 import edu.kit.iti.algo2.panda.management.IndexManager;
@@ -58,7 +59,7 @@ public class Starter implements Runnable {
 		
 		final IndexManager manager = new IndexManager(libraryPath, paths);
 		
-		this.model = new QueryModel(manager, fileViewer);
+		this.model = new AsyncQueryModel(manager, fileViewer);
 	}
 	
 	@Override
