@@ -4,8 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -20,6 +20,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -61,9 +62,10 @@ public class SearchView {
 		searchField.getDocument().addDocumentListener(new QueryDocumentListener());
 		searchField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
 		searchResult.setBorder(BorderFactory.createTitledBorder("Result:"));
+		searchResult.setCellRenderer(new ResultRenderer());
+		searchResult.setPreferredSize(new Dimension(300, 320));
 		JScrollPane searchResultWrapper = new JScrollPane(searchResult,
 				RESULT_VERTICAL_SCROLLBAR, RESULT_HORIZONTAL_SCROLLBAR);
-		searchResultWrapper.setPreferredSize(new Dimension(900, 320));
 		centerPanel.add(searchResultWrapper, BorderLayout.CENTER);
 		root.add(centerPanel);
 	}
@@ -108,20 +110,12 @@ public class SearchView {
 		public void changedUpdate(DocumentEvent e) { processQuery(); }
 	}
 	
-	private class ResultMouseListener implements MouseListener {
+	private class ResultMouseListener extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(e.getClickCount() == 2) {
 				model.viewDocument(searchResult.getSelectedIndex());
 			}
 		}
-		@Override
-		public void mousePressed(MouseEvent e) {}
-		@Override
-		public void mouseReleased(MouseEvent e) {}
-		@Override
-		public void mouseEntered(MouseEvent e) {}
-		@Override
-		public void mouseExited(MouseEvent e) {}
 	}
 }
