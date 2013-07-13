@@ -53,7 +53,7 @@ public class QueryModel extends AbstractListModel<String> {
 	@Override
 	public String getElementAt(int idx) {
 		Document document = result.get(idx);
-		return document.getTitle() + ": " + index.extractSnippet(document, query, 100);
+		return "<html><h2>" + document.getTitle() + "</h2><hr/><p>" + index.extractSnippet(document, query, 100) + "</p></html>";
 	}
 
 	public void close() {
