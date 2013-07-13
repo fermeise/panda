@@ -1,7 +1,9 @@
 package edu.kit.iti.algo2.panda.gui;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
@@ -26,9 +28,9 @@ public class Starter implements Runnable {
 	}
 
 	public Starter() throws IOException {
-		final IndexManager manager = new IndexManager("../library");
-		manager.addDirectory(Paths.get("d:/studium/"));
-		manager.addDirectory(Paths.get("d:/Development/Java/documents/"));
+		ArrayList<Path> paths = new ArrayList<Path>();
+		paths.add(Paths.get("d:/studium/"));
+		final IndexManager manager = new IndexManager("../library", paths);
 		
 		this.model = new QueryModel(manager);
 	}

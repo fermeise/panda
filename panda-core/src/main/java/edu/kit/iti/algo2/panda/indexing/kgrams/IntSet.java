@@ -57,9 +57,4 @@ public class IntSet {
 		
 		return list;
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof IntSet && this.equals((IntSet)obj);
-	}
 }

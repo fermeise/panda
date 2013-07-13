@@ -1,6 +1,8 @@
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,9 +13,10 @@ import edu.kit.iti.algo2.panda.management.IndexManager;
 
 public class QueryFiles {
 	public static void main(String[] args) throws IOException {
-		final IndexFacade facade = new IndexManager("../library");
-		facade.addDirectory(Paths.get("d:/Development/Java/documents/"));
-		
+		ArrayList<Path> paths = new ArrayList<Path>();
+		paths.add(Paths.get("d:/Development/Java/documents/"));
+		final IndexFacade facade = new IndexManager("../library", paths);
+
 		Scanner scanner = new Scanner(System.in);
 		
 		String queryString = scanner.nextLine();

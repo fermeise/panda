@@ -1,26 +1,11 @@
 package edu.kit.iti.algo2.panda.management;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import edu.kit.iti.algo2.panda.indexing.Document;
 import edu.kit.iti.algo2.panda.indexing.Query;
 
 public interface IndexFacade {
-	/**
-	 * Add a directory to the index. All documents in the directory or subdirectories
-	 * are indexed.
-	 * @param directory The directory to be indexed.
-	 * @throws UserException If the directory is already indexed.
-	 */
-	public void addDirectory(Path directory);
-	
-	/**
-	 * Removes a directory from the index.
-	 * @param directory The directory to be removed from the index.
-	 */
-	public void removeDirectory(Path directory);
-	
 	/**
 	 * Query the index.
 	 * @param query The query to be executed.
@@ -37,13 +22,7 @@ public interface IndexFacade {
 	 * @return The generated snippet.
 	 */
 	public String extractSnippet(Document document, Query query, int maxSnippetSize);
-	
-	/**
-	 * Checks whether the content of the watched directories has changed and
-	 * updates the index if necessary.
-	 */
-	public void update();
-	
+
 	/**
 	 * Rebuilds the index explicitly, so the obsolete files are no longer in
 	 * the index and the scores are updated. 

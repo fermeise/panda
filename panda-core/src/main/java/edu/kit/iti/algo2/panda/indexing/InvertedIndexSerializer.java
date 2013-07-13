@@ -40,7 +40,7 @@ public class InvertedIndexSerializer {
 			int offset = 0;
 			for(int i = 0; i < documentCount; i++) {
 				stream.writeInt(documents[i] - offset);
-				stream.writeShort(scores[i] - offset);
+				stream.writeShort(scores[i]);
 				offset = documents[i];
 			}
 		}
