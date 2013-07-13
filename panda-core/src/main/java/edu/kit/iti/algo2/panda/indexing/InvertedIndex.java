@@ -180,7 +180,7 @@ public class InvertedIndex implements DocumentIndex {
 			true,  true,  true,  false, false, false, false, false};
 	
 	protected static boolean isCharacter(char c) {
-		return (c < 128 && charMap[c]) || Character.isAlphabetic(c);
+		return (c < 128) ? charMap[c] : Character.isAlphabetic(c);
 	}
 	
 	protected static String normalizeWord(String word) {
