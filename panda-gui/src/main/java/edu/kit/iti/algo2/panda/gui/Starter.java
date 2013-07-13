@@ -1,9 +1,11 @@
 package edu.kit.iti.algo2.panda.gui;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
@@ -28,9 +30,21 @@ public class Starter implements Runnable {
 	}
 
 	public Starter() throws IOException {
+		Properties properties = new Properties();
+		properties.load(new FileInputStream("config.properties"));
+		
+		final String libraryPath = properties.getProperty("library", "./library");
+		
 		ArrayList<Path> paths = new ArrayList<Path>();
-		paths.add(Paths.get("d:/studium/"));
-		final IndexManager manager = new IndexManager("../library", paths);
+		for(int i = 1;; i++) {
+			String path = properties.getProperty("path" + i);
+			if(path != null) {
+				paths.add(Paths.get(path));
+			} else {
+				break;
+			}
+		}
+		final IndexManager manager = new IndexManager(libraryPath, paths);
 		
 		this.model = new QueryModel(manager);
 	}
