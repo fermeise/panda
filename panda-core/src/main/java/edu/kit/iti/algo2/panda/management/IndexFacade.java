@@ -34,4 +34,16 @@ public interface IndexFacade {
 	 * data structures to the disk.
 	 */
 	public void close();
+
+	/**
+	 * Add a status listener.
+	 * @param listener The status listener to be added.
+	 */
+	public void addStatusListener(StatusListener listener);
+	
+	/**
+	 * Remove a status listener.
+	 * @param listener The status listener to be added.
+	 */
+	public void removeStatusListener(StatusListener listener);
 }

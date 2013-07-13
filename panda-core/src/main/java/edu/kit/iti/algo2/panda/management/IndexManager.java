@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -33,6 +34,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	private final File documentLibraryFile;
 	private final File documentIndexFile;
 	private final File fileSystemFile;
+	private final HashSet<StatusListener> statusListener;
 	
 	private DocumentStorage storage;
 	private FileSystemWatcher fileWatcher;
@@ -43,6 +45,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 		documentLibraryFile = new File(storagePath + ".db");
 		documentIndexFile = new File(storagePath + ".pnd");
 		fileSystemFile = new File(storagePath + ".pfs");
+		statusListener = new HashSet<StatusListener>();
 		
 		this.storage = new SQLiteDocumentStorage(documentLibraryFile.getAbsolutePath());
 		
@@ -52,7 +55,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 		} catch (ParseException | IOException e) {
 		}
 		if(fileWatcher != null && index != null) {
-			log.info("Index with " + index.getDocumentCount() + " documents loaded successfully.");
+			updateStatus("Index with " + index.getDocumentCount() + " documents loaded successfully.");
 		} else {
 			storage.reset();
 			this.fileWatcher = new FileSystemWatcher(this, documentPaths);
@@ -67,7 +70,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 		// Pause fileWatcher first in order to avoid deadlock
 		synchronized(fileWatcher) {
 			synchronized(this) {
-				log.info("Rebuilding index...");
+				updateStatus("Rebuilding index...");
 				
 				index = new InvertedIndex();
 				queryProcessor = new QueryProcessor(index);
@@ -82,6 +85,8 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 					}
 				}
 				index.initialScoring();
+				
+				updateStatus("Index rebuild completed.");
 			}
 		}
 	}
@@ -105,7 +110,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	@Override
 	public void close() {
 		fileWatcher.stop();
-		log.info("Saving files to disk...");
+		updateStatus("Saving index to disk...");
 		try {
 			storage.commitChanges();
 			fileWatcher.saveToFile(fileSystemFile);
@@ -114,6 +119,16 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 		} catch(IOException e) {
 			log.severe("Error while saving to disk.");
 		}
+	}
+	
+	@Override
+	public synchronized void addStatusListener(StatusListener listener) {
+		this.statusListener.add(listener);
+	}
+	
+	@Override
+	public synchronized void removeStatusListener(StatusListener listener) {
+		this.statusListener.remove(listener);
 	}
 		
 	@Override
@@ -132,7 +147,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 			Document document = TikaDocumentFactory.getInstance().createDocument(path);
 			if (!document.getContent().isEmpty()) {
 				synchronized(this) {
-					log.info(path.toString());
+					updateStatus("Added document: " + path.toString());
 					int id = index.addDocument(document);
 					storage.addDocument(id, document);
 					return id;
@@ -146,7 +161,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 
 	@Override
 	public synchronized void documentRemoved(Path path, int documentId) {
-		log.info(path.toString());
+		updateStatus("Removed document: " + path.toString());
 		index.removeDocument(documentId);
 		storage.removeDocument(documentId);
 	}
@@ -155,7 +170,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	public void signalInitialUpdateComplete() {
 		synchronized(this) {
 			if(!index.isScored()) {
-				log.info("Calculating initial scoring.");
+				updateStatus("Indexing completed.");
 				index.initialScoring();
 			}
 		}
@@ -165,6 +180,13 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 					this.rebuild();
 				}
 			}
+		}
+	}
+	
+	private synchronized void updateStatus(String status) {
+		log.info(status);
+		for(StatusListener listener: statusListener) {
+			listener.statusUpdate(status);
 		}
 	}
 }

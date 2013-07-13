@@ -22,6 +22,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import edu.kit.iti.algo2.panda.gui.model.QueryModel;
+import edu.kit.iti.algo2.panda.management.StatusListener;
 
 public class SearchView {
 	
@@ -65,18 +66,23 @@ public class SearchView {
 		root.add(centerPanel);
 	}
 	
+	private final JLabel statusLabel = new JLabel(" ");
 	private final JPanel statusPanel = new JPanel();
 	{
 		statusPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
-		JLabel label = new JLabel("Index finished");
-		statusPanel.add(label);
+		statusPanel.add(statusLabel);
 		root.add(statusPanel, BorderLayout.SOUTH);
 	}
 	
 	public SearchView(QueryModel model) {
 		this.model = model;
 		searchResult.setModel(model);
+		model.addStatusListener(new StatusListener() {
+			public void statusUpdate(String status) {
+				statusLabel.setText(status);
+			}
+		});
 		root.pack();
 		root.setLocationByPlatform(true);
 		root.setVisible(true);
