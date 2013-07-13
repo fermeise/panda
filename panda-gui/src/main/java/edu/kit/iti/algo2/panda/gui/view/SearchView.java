@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -78,6 +80,7 @@ public class SearchView {
 	public SearchView(QueryModel model) {
 		this.model = model;
 		searchResult.setModel(model);
+		searchResult.addMouseListener(new ResultMouseListener());
 		model.addStatusListener(new StatusListener() {
 			public void statusUpdate(String status) {
 				statusLabel.setText(status);
@@ -103,5 +106,22 @@ public class SearchView {
 		public void insertUpdate(DocumentEvent e) { processQuery(); }
 		@Override
 		public void changedUpdate(DocumentEvent e) { processQuery(); }
+	}
+	
+	private class ResultMouseListener implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if(e.getClickCount() == 2) {
+				model.viewDocument(searchResult.getSelectedIndex());
+			}
+		}
+		@Override
+		public void mousePressed(MouseEvent e) {}
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
 	}
 }

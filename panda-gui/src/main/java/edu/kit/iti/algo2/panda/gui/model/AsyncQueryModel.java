@@ -1,5 +1,7 @@
 package edu.kit.iti.algo2.panda.gui.model;
 
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -12,8 +14,8 @@ public class AsyncQueryModel extends QueryModel {
 	private final ExecutorService service = Executors.newSingleThreadExecutor();
 	private Future<?> task;
 	
-	public AsyncQueryModel(IndexManager manager) {
-		super(manager);
+	public AsyncQueryModel(IndexManager manager, HashMap<String, Path> fileViewer) {
+		super(manager, fileViewer);
 	}
 	
 	public void stopOtherQuery() {

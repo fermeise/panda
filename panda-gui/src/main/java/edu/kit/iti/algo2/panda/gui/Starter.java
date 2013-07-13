@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -44,9 +46,19 @@ public class Starter implements Runnable {
 				break;
 			}
 		}
+		
+		HashMap<String, Path> fileViewer = new HashMap<String, Path>();
+		for(Entry<Object, Object> entry: properties.entrySet()) {
+			final String key = (String)entry.getKey();
+			final String value = (String)entry.getValue();
+			if(key.endsWith("Viewer")) {
+				fileViewer.put(key.substring(0, key.length() - 6).toLowerCase(), Paths.get(value));
+			}
+		}
+		
 		final IndexManager manager = new IndexManager(libraryPath, paths);
 		
-		this.model = new QueryModel(manager);
+		this.model = new QueryModel(manager, fileViewer);
 	}
 	
 	@Override

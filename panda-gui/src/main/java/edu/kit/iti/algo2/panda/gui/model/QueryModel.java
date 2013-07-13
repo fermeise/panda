@@ -1,6 +1,9 @@
 package edu.kit.iti.algo2.panda.gui.model;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -15,12 +18,14 @@ public class QueryModel extends AbstractListModel<String> {
 	private static final int numberOfResults = 50;
 
 	private final IndexFacade index;
+	private final HashMap<String, Path> fileViewer;
 	
 	private Query query;
 	private List<Document> result;
 	
-	public QueryModel(IndexFacade index) {
+	public QueryModel(IndexFacade index, HashMap<String, Path> fileViewer) {
 		this.index = index;
+		this.fileViewer = fileViewer;
 		
 		this.query = null;
 		this.result = Collections.emptyList();
@@ -57,5 +62,21 @@ public class QueryModel extends AbstractListModel<String> {
 
 	public void addStatusListener(StatusListener statusListener) {
 		index.addStatusListener(statusListener);
+	}
+
+	public void viewDocument(int documentIndex) {
+		if(documentIndex >= 0 && documentIndex <= result.size()) {
+			Document document = result.get(documentIndex);
+			String filename = document.getFile().getFileName().toString();
+			String extension = filename.substring(filename.lastIndexOf('.') + 1);
+			Path viewer = fileViewer.get(extension);
+			if(viewer != null) {
+				try {
+					new ProcessBuilder(viewer.toString(), document.getFile().toString()).start();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
