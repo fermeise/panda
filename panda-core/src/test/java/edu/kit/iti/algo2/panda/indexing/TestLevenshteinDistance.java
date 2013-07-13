@@ -1,10 +1,20 @@
 package edu.kit.iti.algo2.panda.indexing;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import edu.kit.iti.algo2.panda.indexing.kgrams.LevenshteinDistance;
+import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
 
 public class TestLevenshteinDistance {
 	
@@ -29,7 +39,7 @@ public class TestLevenshteinDistance {
 		msg = String.format(FALSE_MESSAGE, b, a, distance-1);
 		assertFalse(LevenshteinDistance.smallerOrEqualThan(t, s, distance-1));
 	}
-
+	
 	@Test
 	public void testEmpty() {
 		testWithComputedDistance("", "", 0);
@@ -71,6 +81,45 @@ public class TestLevenshteinDistance {
 		testWithComputedDistance("red", "retired", 4);
 		testWithComputedDistance("class", "cold", 4);
 		testWithComputedDistance("bread", "bed", 2);
+	}
+	
+	private char[][] loadRandomWordsFromWikipedia(int maxWords) throws IOException {
+		List<WikipediaArticle> articles = WikipediaArticle.loadArticles();
+		InvertedIndex index = new InvertedIndex();
+		for (WikipediaArticle article : articles) {
+			index.addDocument(article);
+		}
 		
+		char[][] words = new char[maxWords][];
+		List<String> wordList = new ArrayList<>(index.getWords());
+		Collections.shuffle(wordList);
+		Iterator<String> wordIterator = wordList.iterator();
+		for (int i=0; i < words.length && wordIterator.hasNext(); i++) {
+			words[i] = wordIterator.next().toCharArray();
+		}
+		return words;
+	}
+	
+	@Test
+	@Ignore
+	// Brute force correctness test for partial Levenshtein distance.
+	public void testPartialCorrectness() throws IOException {
+		char[][] words = loadRandomWordsFromWikipedia(1000);
+		System.out.format("Finished reading random word list of size %d.%n", words.length);
+		long timeTaken = 0;
+		long iterations = 0;
+		for (int i=0; i < words.length; i++) {
+			char[] s = words[i];
+			for (int j=i; j < words.length; j++) {
+				char[] t = words[j];
+				int actualDistance = LevenshteinDistance.distance(s, t);
+				long before = System.currentTimeMillis();
+				assertTrue(LevenshteinDistance.smallerOrEqualThan(s, t, actualDistance));
+				timeTaken += System.currentTimeMillis() - before;
+				iterations++;
+			}
+		}
+		String msg = "Partial distance computation took %d ms for %d iterations.%n";
+		System.out.format(msg, timeTaken, iterations);
 	}
 }
