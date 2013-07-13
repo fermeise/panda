@@ -73,14 +73,14 @@ public class QueryProcessor {
 		int begin = Math.max(bestMatchBegin - (maxSnippetSize - bestMatchLength) / 2, 0);
 		int end = Math.min(bestMatchEnd + (maxSnippetSize - bestMatchLength) / 2, content.length());
 		while(begin < bestMatchBegin &&
-				!(Character.isAlphabetic(content.charAt(begin)) &&
-						(begin == 0 || !Character.isAlphabetic(content.charAt(begin - 1))))) {
+				!(InvertedIndex.isCharacter(content.charAt(begin)) &&
+						(begin == 0 || !InvertedIndex.isCharacter(content.charAt(begin - 1))))) {
 			begin++;
 		}
 		
 		while(end > bestMatchEnd &&
-				!(Character.isAlphabetic(content.charAt(end - 1)) &&
-						(end == content.length() || !Character.isAlphabetic(content.charAt(end))))) {
+				!(InvertedIndex.isCharacter(content.charAt(end - 1)) &&
+						(end == content.length() || !InvertedIndex.isCharacter(content.charAt(end))))) {
 			end--;
 		}
 

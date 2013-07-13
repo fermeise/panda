@@ -17,22 +17,14 @@ public class Query {
 			if(current == ' ') {
 				String word = queryString.substring(wordBegin, i);
 				if(!word.isEmpty()) {
-					if(word.startsWith("-")) {
-						excludedWords.add(WordIterator.normalizeWord(word.substring(1)));
-					} else {
-						includedWords.add(WordIterator.normalizeWord(word));
-					}
+					addWord(word);
 				}
 				wordBegin = i + 1;
 			}
 		}
 		String word = queryString.substring(wordBegin);
 		if(!word.isEmpty()) {
-			if(word.startsWith("-")) {
-				excludedWords.add(WordIterator.normalizeWord(word.substring(1)));
-			} else {
-				includedWords.add(WordIterator.normalizeWord(word));
-			}
+			addWord(word);
 		}
 	}
 
@@ -42,5 +34,17 @@ public class Query {
 
 	public ArrayList<String> getExcludedWords() {
 		return excludedWords;
+	}
+	
+	private void addWord(String word) {
+		if(word.startsWith("-")) {
+			if(word.length() >= InvertedIndex.minimumWordLength + 1) {
+				excludedWords.add(InvertedIndex.normalizeWord(word.substring(1)));
+			}
+		} else {
+			if(word.length() >= InvertedIndex.minimumWordLength) {
+				includedWords.add(InvertedIndex.normalizeWord(word));
+			}
+		}
 	}
 }

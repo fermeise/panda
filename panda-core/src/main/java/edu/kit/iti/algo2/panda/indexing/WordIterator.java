@@ -4,8 +4,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WordIterator implements Iterator<TextOccurrence> {
-	private static final int minimumWordLength = 2;
-	
 	private final char[] content;
 	private int pos;
 	private TextOccurrence occurrence;
@@ -39,24 +37,20 @@ public class WordIterator implements Iterator<TextOccurrence> {
 	
 	private void findNextWord() {
 		while(pos < content.length) {
-			while(pos < content.length && !Character.isAlphabetic(content[pos])) pos++;
+			while(pos < content.length && !InvertedIndex.isCharacter(content[pos])) pos++;
 			int wordBegin = pos;
-			while(pos < content.length && Character.isAlphabetic(content[pos])) pos++;
+			while(pos < content.length && InvertedIndex.isCharacter(content[pos])) pos++;
 			int wordEnd = pos;
 			
 			int wordLength = wordEnd - wordBegin;
-			if(wordLength >= minimumWordLength) {
+			if(wordLength >= InvertedIndex.minimumWordLength) {
 				occurrence = new TextOccurrence(
-						normalizeWord(new String(content, wordBegin, wordLength)), wordBegin);
+						InvertedIndex.normalizeWord(new String(content, wordBegin, wordLength)), wordBegin);
 				hasNext = true;
 				return;
 			}
 		}
 		hasNext = false;
 		return;
-	}
-	
-	public static String normalizeWord(String word) {
-		return word.toLowerCase();
 	}
 }

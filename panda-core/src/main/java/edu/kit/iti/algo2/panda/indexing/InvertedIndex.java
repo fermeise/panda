@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class InvertedIndex implements DocumentIndex {
-	private static final int minimumWordLength = 2;
+	protected static final int minimumWordLength = 2;
 	private static final int initialSpace = 16;
 	
 	protected HashMap<String, InvertedList> invertedIndex;
@@ -49,9 +49,9 @@ public class InvertedIndex implements DocumentIndex {
 			HashSet<InvertedList> wordsUsed = new HashSet<InvertedList>();
 			int pos = 0;
 			while(pos < content.length) {
-				while(pos < content.length && !Character.isAlphabetic(content[pos])) pos++;
+				while(pos < content.length && !isCharacter(content[pos])) pos++;
 				int wordBegin = pos;
-				while(pos < content.length && Character.isAlphabetic(content[pos])) pos++;
+				while(pos < content.length && isCharacter(content[pos])) pos++;
 				int wordEnd = pos;
 				
 				int wordLength = wordEnd - wordBegin;
@@ -72,9 +72,9 @@ public class InvertedIndex implements DocumentIndex {
 		} else {
 			int pos = 0;
 			while(pos < content.length) {
-				while(pos < content.length && !Character.isAlphabetic(content[pos])) pos++;
+				while(pos < content.length && !isCharacter(content[pos])) pos++;
 				int wordBegin = pos;
-				while(pos < content.length && Character.isAlphabetic(content[pos])) pos++;
+				while(pos < content.length && isCharacter(content[pos])) pos++;
 				int wordEnd = pos;
 				
 				int wordLength = wordEnd - wordBegin;
@@ -170,7 +170,30 @@ public class InvertedIndex implements DocumentIndex {
 		return list;
 	}
 	
-	private String normalizeWord(String word) {
+	// All letters and apostrophs
+	static boolean[] charMap = {
+			false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, 
+			false, false, false, false, false, false, false, false, 
+			false, false, false, false, false, false, false, false, 
+			false, false, false, false, false, false, false, true, 
+			false, false, false, false, false, false, false, false, 
+			false, false, false, false, false, false, false, false, 
+			false, false, false, false, false, false, false, false, 
+			false, true,  true,  true,  true,  true,  true,  true,  
+			true,  true,  true,  true,  true,  true,  true,  true,  
+			true,  true,  true,  true,  true,  true,  true,  true,  
+			true,  true,  true,  false, false, false, false, false, 
+			false, true,  true,  true,  true,  true,  true,  true,  
+			true,  true,  true,  true,  true,  true,  true,  true,  
+			true,  true,  true,  true,  true,  true,  true,  true,  
+			true,  true,  true,  false, false, false, false, false};
+	
+	protected static boolean isCharacter(char c) {
+		return (c < 128 && charMap[c]) || Character.isAlphabetic(c);
+	}
+	
+	protected static String normalizeWord(String word) {
 		return word.toLowerCase();
 	}
 }
