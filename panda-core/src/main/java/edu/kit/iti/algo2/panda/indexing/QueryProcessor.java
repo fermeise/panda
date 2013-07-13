@@ -34,7 +34,7 @@ public class QueryProcessor {
 		return result.rankResults(maxResultCount);
 	}
 
-	public String extractSnippet(Document document, Query query, int maxSnippetSize) {
+	public String extractSnippet(Document document, Query query, int maxSnippetSize, boolean html) {
 		String content = document.getContent();
 		
 		int bestMatchBegin = 0;
@@ -83,8 +83,31 @@ public class QueryProcessor {
 						(end == content.length() || !InvertedIndex.isCharacter(content.charAt(end))))) {
 			end--;
 		}
-
-		return removeUnprintableCharacters(content.substring(begin, end)).replace("\r\n", " ").replace("\n", " ");
+		
+		String result = content.substring(begin, end);
+		
+		if(html) {
+			StringBuilder snippet = new StringBuilder();
+			int pos = 0;
+			it = new WordIterator(result);
+			while(it.hasNext()) {
+				TextOccurrence current = it.next();
+				if(query.getIncludedWords().contains(current.getText())) {
+					int occPos = current.getPosition();
+					int occLen = current.getText().length();
+					snippet.append(result.substring(pos, occPos));
+					snippet.append("<b>");
+					snippet.append(result.substring(occPos, occPos + occLen));
+					snippet.append("</b>");
+					pos = occPos + occLen;
+				}
+			}
+			snippet.append(result.substring(pos));
+			
+			result = snippet.toString();
+		}
+		
+		return removeUnprintableCharacters(result).replace("\r\n", " ").replace("\n", " ");
 	}
 	
 	private String removeUnprintableCharacters(String str) {

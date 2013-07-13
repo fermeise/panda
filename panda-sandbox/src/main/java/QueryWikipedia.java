@@ -51,7 +51,7 @@ public class QueryWikipedia {
 				
 				System.out.println((i + 1) + ". " + document.getTitle()
 						+ " (" + result.get(i).getScore() + ")");
-				System.out.println(queryProcessor.extractSnippet(document, query, 100));
+				System.out.println(queryProcessor.extractSnippet(document, query, 100, false));
 			}
 			System.out.println("");
 			queryString = scanner.nextLine();

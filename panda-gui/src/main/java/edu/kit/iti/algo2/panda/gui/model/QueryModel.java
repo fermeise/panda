@@ -17,7 +17,7 @@ import edu.kit.iti.algo2.panda.management.StatusListener;
 public class QueryModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = -968307538266585151L;
 	private static final int numberOfResults = 50;
-	private static final int snippetLength = 140;
+	private static final int snippetLength = 300;
 
 	private final IndexFacade index;
 	private final HashMap<String, Path> fileViewer;
@@ -38,7 +38,7 @@ public class QueryModel extends AbstractListModel<String> {
 		final List<Document> newDocuments = index.query(query, numberOfResults);
 		final List<String> newSnippets = new ArrayList<String>();
 		for(Document document: newDocuments) {
-			newSnippets.add(index.extractSnippet(document, query, snippetLength));
+			newSnippets.add(index.extractSnippet(document, query, snippetLength, true));
 		}
 		
 		synchronized(this) {
@@ -63,7 +63,7 @@ public class QueryModel extends AbstractListModel<String> {
 
 	@Override
 	public synchronized String getElementAt(int idx) {
-		return documents.get(idx).getTitle() + ": " + snippets.get(idx);
+		return "<html><h3>" + documents.get(idx).getTitle() + "</h3><p>" + snippets.get(idx) + "</p></html>";
 	}
 
 	public void close() {

@@ -19,9 +19,10 @@ public interface IndexFacade {
 	 * @param document The document returned by a query.
 	 * @param query The query for which the snippet is generated.
 	 * @param maxSnippetSize The maximum size of the snippet.
+	 * @param html Determines whether the found words should be highlighted.
 	 * @return The generated snippet.
 	 */
-	public String extractSnippet(Document document, Query query, int maxSnippetSize);
+	public String extractSnippet(Document document, Query query, int maxSnippetSize, boolean html);
 
 	/**
 	 * Rebuilds the index explicitly, so the obsolete files are no longer in

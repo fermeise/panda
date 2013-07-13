@@ -103,8 +103,8 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	}
 
 	@Override
-	public synchronized String extractSnippet(Document document, Query query, int maxSnippetSize) {
-		return queryProcessor.extractSnippet(document, query, maxSnippetSize);
+	public synchronized String extractSnippet(Document document, Query query, int maxSnippetSize, boolean html) {
+		return queryProcessor.extractSnippet(document, query, maxSnippetSize, html);
 	}
 
 	@Override

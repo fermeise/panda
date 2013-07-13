@@ -26,7 +26,7 @@ public class QueryFiles {
 			for(int i = 0; i < result.size(); i++) {
 				Document document = result.get(i);
 				System.out.println((i + 1) + ". " + document.getFile().toString());
-				System.out.println(facade.extractSnippet(document, query, 100));
+				System.out.println(facade.extractSnippet(document, query, 100, false));
 			}
 			System.out.println("");
 			queryString = scanner.nextLine();
