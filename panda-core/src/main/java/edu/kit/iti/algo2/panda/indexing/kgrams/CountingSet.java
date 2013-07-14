@@ -1,5 +1,8 @@
 package edu.kit.iti.algo2.panda.indexing.kgrams;
 
+/**
+ * A set of unique sorted elements and the number of their occurrences.
+ */
 public class CountingSet {
 	private static final int INITIAL_SPACE = 16;
 	
@@ -12,6 +15,13 @@ public class CountingSet {
 		this.countings = new int[INITIAL_SPACE];
 	}
 	
+	/**
+	 * Add all elements from other to this and updates the counting of this.
+	 * 
+	 * Can be seen as a special case of union between this and other.
+	 * 
+	 * @param other is a sorted set of integers to merge with.
+	 */
 	public void addAll(IntSet other) {
 		int newInitialSize = size + other.size();
 		int[] newElements = new int[newInitialSize];
@@ -39,14 +49,25 @@ public class CountingSet {
 		size = k;
 	}
 	
+	/**
+	 * @param index is the same index as the element.
+	 * @return how many time the element at index was inserted.
+	 */
 	public int getCount(int index) {
 		return this.countings[index];
 	}
 	
+	/**
+	 * @param index is the elements array index positions.
+	 * @return the element at the given position.
+	 */
 	public int getElement(int index) {
 		return this.elements[index];
 	}
 	
+	/**
+	 * @return the number of elements.
+	 */
 	public int size() {
 		return this.size;
 	}
