@@ -15,7 +15,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import edu.kit.iti.algo2.panda.gui.model.CompletionModel;
 import edu.kit.iti.algo2.panda.gui.model.QueryModel;
 
 public class SearchView extends JFrame {
@@ -41,14 +40,12 @@ public class SearchView extends JFrame {
 	
 	private final JPanel centerPanel = new JPanel(new BorderLayout());
 	private final ResultPanel resultPanel;
-	private final CompletionPanel completionPanel;
 	private final StatusPanel statusPanel;
 	
 	public SearchView(QueryModel model) {
 		super(TITLE);
 		this.model = model;
 		this.resultPanel = new ResultPanel(model);
-		this.completionPanel = new CompletionPanel(new CompletionModel());
 		this.statusPanel = new StatusPanel(model);
 		initAndShowView();
 	}
@@ -60,7 +57,6 @@ public class SearchView extends JFrame {
 		addWindowListener(windowListener);
 		
 		centerPanel.add(resultPanel, BorderLayout.CENTER);
-		centerPanel.add(completionPanel, BorderLayout.WEST);
 		
 		add(searchField, BorderLayout.NORTH);
 		add(centerPanel, BorderLayout.CENTER);
