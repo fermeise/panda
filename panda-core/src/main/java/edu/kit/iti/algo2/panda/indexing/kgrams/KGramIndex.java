@@ -12,7 +12,7 @@ import java.util.Set;
  * Simple index on splits of length k.
  */
 public class KGramIndex {
-	private static int defaultK = 3;
+	private static int defaultK = 2;
 	
 	private final ArrayList<String> words;
 	private final HashMap<String, IntSet> index;
