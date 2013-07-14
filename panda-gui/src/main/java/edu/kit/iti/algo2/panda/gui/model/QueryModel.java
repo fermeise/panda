@@ -51,7 +51,7 @@ public class QueryModel extends AbstractListModel<String> {
 				this.fireIntervalRemoved(this, 0, oldSize - 1);
 			}
 			if (!newDocuments.isEmpty()) {
-				this.fireIntervalAdded(this, 0, newDocuments.size()-1);
+				this.fireIntervalAdded(this, 0, newDocuments.size() - 1);
 			}
 		}
 	}
@@ -63,6 +63,10 @@ public class QueryModel extends AbstractListModel<String> {
 
 	@Override
 	public synchronized String getElementAt(int idx) {
+		if(idx >= getSize()) {
+			// Somehow the list model sometimes doesn't get length changes
+			return null;
+		}
 		return "<html><h3>" + documents.get(idx).getTitle() + "</h3><p>" + snippets.get(idx) + "</p></html>";
 	}
 
