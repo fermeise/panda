@@ -122,6 +122,9 @@ public class InvertedIndex implements DocumentIndex {
 	}
 	
 	public boolean needsRebuild() {
+		if(invertedIndex.isEmpty()) {
+			return false;
+		}
 		final long avgInvertedListLength =
 				totalDocumentLength / invertedIndex.size();
 		return obsoleteDocuments.size() > avgInvertedListLength ||
