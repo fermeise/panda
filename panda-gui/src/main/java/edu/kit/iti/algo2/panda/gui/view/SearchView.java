@@ -1,100 +1,83 @@
 package edu.kit.iti.algo2.panda.gui.view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import edu.kit.iti.algo2.panda.gui.model.CompletionModel;
 import edu.kit.iti.algo2.panda.gui.model.QueryModel;
-import edu.kit.iti.algo2.panda.management.StatusListener;
 
-public class SearchView {
+public class SearchView extends JFrame {
+	private static final long serialVersionUID = 6854439490501728903L;
+
+	private final static String TITLE = "PANDA Search";
 	
-	private final static int RESULT_VERTICAL_SCROLLBAR = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS;
-	private final static int RESULT_HORIZONTAL_SCROLLBAR = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+	private final QueryModel model;
 	
-	private final JFrame root = new JFrame("PANDA Search");
-	{
-		root.setLayout(new BorderLayout());
-		root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		root.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent evt) {
-				model.close();
-			}
-		});
-	}
+	private final WindowListener windowListener = new WindowAdapter() {
+		public void windowClosing(WindowEvent evt) {
+			model.close();
+		}
+	};
 	
 	private final JMenuBar topMenu = new JMenuBar();
+	
+	private final JTextField searchField = new JTextField(30);
 	{
+		searchField.getDocument().addDocumentListener(new QueryDocumentListener());
+		searchField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+	}
+	
+	private final JPanel centerPanel = new JPanel(new BorderLayout());
+	private final ResultPanel resultPanel;
+	private final CompletionPanel completionPanel;
+	private final StatusPanel statusPanel;
+	
+	public SearchView(QueryModel model) {
+		super(TITLE);
+		this.model = model;
+		this.resultPanel = new ResultPanel(model);
+		this.completionPanel = new CompletionPanel(new CompletionModel());
+		this.statusPanel = new StatusPanel(model);
+		initAndShowView();
+	}
+	
+	private void initAndShowView() {
+		initMenu();
+		setLayout(new BorderLayout());
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(windowListener);
+		
+		centerPanel.add(resultPanel, BorderLayout.CENTER);
+		centerPanel.add(completionPanel, BorderLayout.WEST);
+		
+		add(searchField, BorderLayout.NORTH);
+		add(centerPanel, BorderLayout.CENTER);
+		add(statusPanel, BorderLayout.SOUTH);
+		
+		pack();
+		setLocationByPlatform(true);
+		setVisible(true);
+	}
+	
+	private void initMenu() {
 		JMenu fileMenu = new JMenu("File");
 		JMenu settingsMenu = new JMenu("Settings");
 		fileMenu.add(new JMenuItem("Close"));
 		topMenu.add(fileMenu);
 		topMenu.add(settingsMenu);
-		root.setJMenuBar(topMenu);
-	}
-	
-	private final JPanel centerPanel = new JPanel(new BorderLayout());
-	private final JTextField searchField = new JTextField(30);
-	private final QueryModel model;
-	private final JList<String> searchResult = new JList<>();
-	{
-		centerPanel.add(searchField, BorderLayout.NORTH);
-		searchField.getDocument().addDocumentListener(new QueryDocumentListener());
-		searchField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
-		searchResult.setBorder(BorderFactory.createTitledBorder("Result:"));
-		searchResult.setCellRenderer(new ResultRenderer());
-		searchResult.setPreferredSize(new Dimension(300, 320));
-		JScrollPane searchResultWrapper = new JScrollPane(searchResult,
-				RESULT_VERTICAL_SCROLLBAR, RESULT_HORIZONTAL_SCROLLBAR);
-		centerPanel.add(searchResultWrapper, BorderLayout.CENTER);
-		root.add(centerPanel);
-	}
-	
-	private final JLabel statusLabel = new JLabel(" ");
-	private final JPanel statusPanel = new JPanel();
-	{
-		statusPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
-		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
-		statusPanel.add(statusLabel);
-		root.add(statusPanel, BorderLayout.SOUTH);
-	}
-	
-	public SearchView(QueryModel model) {
-		this.model = model;
-		searchResult.setModel(model);
-		searchResult.addMouseListener(new ResultMouseListener());
-		model.addStatusListener(new StatusListener() {
-			public void statusUpdate(String status) {
-				statusLabel.setText(status);
-			}
-		});
-		root.pack();
-		root.setLocationByPlatform(true);
-		root.setVisible(true);
-	}
-	
-	public void setVisible(boolean show) {
-		root.setVisible(show);
+		setJMenuBar(topMenu);
 	}
 	
 	private void processQuery() {
@@ -108,14 +91,5 @@ public class SearchView {
 		public void insertUpdate(DocumentEvent e) { processQuery(); }
 		@Override
 		public void changedUpdate(DocumentEvent e) { processQuery(); }
-	}
-	
-	private class ResultMouseListener extends MouseAdapter {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if(e.getClickCount() == 2) {
-				model.viewDocument(searchResult.getSelectedIndex());
-			}
-		}
 	}
 }
