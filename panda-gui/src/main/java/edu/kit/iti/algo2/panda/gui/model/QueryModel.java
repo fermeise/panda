@@ -73,6 +73,10 @@ public class QueryModel extends AbstractListModel<String> {
 	public void close() {
 		index.close();
 	}
+	
+	public void rebuildIndex() {
+		index.rebuild();
+	}
 
 	public void addStatusListener(StatusListener statusListener) {
 		index.addStatusListener(statusListener);

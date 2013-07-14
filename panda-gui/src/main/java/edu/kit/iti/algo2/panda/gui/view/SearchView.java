@@ -2,6 +2,8 @@ package edu.kit.iti.algo2.panda.gui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -69,10 +71,27 @@ public class SearchView extends JFrame {
 	
 	private void initMenu() {
 		JMenu fileMenu = new JMenu("File");
-		JMenu settingsMenu = new JMenu("Settings");
-		fileMenu.add(new JMenuItem("Close"));
 		topMenu.add(fileMenu);
-		topMenu.add(settingsMenu);
+		JMenuItem closeItem = new JMenuItem("Close");
+		fileMenu.add(closeItem);
+		closeItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SearchView.this.dispose();
+			}
+		});
+		
+		JMenu indexMenu = new JMenu("Index");
+		topMenu.add(indexMenu);
+		JMenuItem rebuildItem = new JMenuItem("Rebuild");
+		indexMenu.add(rebuildItem);
+		rebuildItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.rebuildIndex();
+			}
+		});
+		
 		setJMenuBar(topMenu);
 	}
 	
