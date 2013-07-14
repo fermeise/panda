@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
@@ -31,6 +32,9 @@ import edu.kit.iti.algo2.panda.parsing.TikaDocumentFactory;
  */
 public class IndexManager implements IndexFacade, FileSystemHandler {
 	private static final Logger log = Logger.getLogger("IndexManager");
+	private static final HashSet<String> extensions = new HashSet<String>(
+			Arrays.asList("pdf", "ps", "txt", "htm", "html", "doc", "docx"));
+	
 	private final File documentLibraryFile;
 	private final File documentIndexFile;
 	private final File fileSystemFile;
@@ -143,12 +147,9 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 		
 	@Override
 	public boolean fileMatches(Path path) {
-		final String pathString = path.toString().toLowerCase();
-		return pathString.endsWith(".pdf") ||
-				pathString.endsWith(".ps") ||
-				pathString.endsWith(".txt") ||
-				pathString.endsWith(".doc") ||
-				pathString.endsWith(".docx");
+		final String filename = path.toString().toLowerCase();
+		final String extension = filename.substring(filename.lastIndexOf('.') + 1);
+		return extensions.contains(extension);
 	}
 
 	@Override
