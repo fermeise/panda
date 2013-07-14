@@ -78,6 +78,8 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 			synchronized(this) {
 				updateStatus("Rebuilding index...");
 				
+				long begin = System.currentTimeMillis();
+				
 				index = new InvertedIndex();
 				queryProcessor = new QueryProcessor(index);
 				
@@ -86,13 +88,15 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 					Document document = storage.restoreDocument(id);
 					if(document != null) {
 						int newId = index.addDocument(document);
-						storage.changeId(id, newId);
-						fileWatcher.changeId(document.getFile(), newId);
+						if(newId != id) {
+							storage.changeId(id, newId);
+							fileWatcher.changeId(document.getFile(), newId);
+						}
 					}
 				}
 				index.initialScoring();
 				
-				updateStatus("Index rebuild completed.");
+				updateStatus("Indexing took " + (System.currentTimeMillis() - begin) + " ms.");
 				indexChanged = true;
 			}
 		}
