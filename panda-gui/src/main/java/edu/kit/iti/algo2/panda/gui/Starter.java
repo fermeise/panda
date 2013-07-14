@@ -16,6 +16,7 @@ import javax.swing.UIManager;
 import edu.kit.iti.algo2.panda.gui.model.AsyncQueryModel;
 import edu.kit.iti.algo2.panda.gui.model.QueryModel;
 import edu.kit.iti.algo2.panda.gui.view.SearchView;
+import edu.kit.iti.algo2.panda.indexing.QueryProcessor;
 import edu.kit.iti.algo2.panda.management.IndexManager;
 
 public class Starter implements Runnable {
@@ -56,6 +57,10 @@ public class Starter implements Runnable {
 				fileViewer.put(key.substring(0, key.length() - 6).toLowerCase(), Paths.get(value));
 			}
 		}
+		
+		QueryProcessor.maxEditDistance = Integer.parseInt(properties.getProperty("max_edit_distance", "2"));
+		QueryModel.numberOfResults = Integer.parseInt(properties.getProperty("number_of_results", "20"));
+		QueryModel.snippetLength = Integer.parseInt(properties.getProperty("snippet_length", "300"));
 		
 		final IndexManager manager = new IndexManager(libraryPath, paths);
 		

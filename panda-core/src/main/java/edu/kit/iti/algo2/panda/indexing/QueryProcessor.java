@@ -10,8 +10,9 @@ import java.util.List;
 import edu.kit.iti.algo2.panda.indexing.kgrams.KGramIndex;
 
 public class QueryProcessor {
-	private static final int maxEditDistance = 2;
 	private static final Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
+	public static int maxEditDistance = 2;
+	
 	private DocumentIndex index;
 	
 	public QueryProcessor(DocumentIndex index) {

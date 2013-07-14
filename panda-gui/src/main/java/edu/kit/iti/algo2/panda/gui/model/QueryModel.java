@@ -16,8 +16,8 @@ import edu.kit.iti.algo2.panda.management.StatusListener;
 
 public class QueryModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = -968307538266585151L;
-	private static final int numberOfResults = 50;
-	private static final int snippetLength = 300;
+	public static int numberOfResults = 20;
+	public static int snippetLength = 300;
 
 	private final IndexFacade index;
 	private final HashMap<String, Path> fileViewer;
