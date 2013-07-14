@@ -21,6 +21,7 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 	private Connection connection;
 	private PreparedStatement addDocumentStmt;
 	private PreparedStatement retrieveDocumentStmt;
+	private PreparedStatement retrieveDocumentMetaStmt;
 	private PreparedStatement removeDocumentStmt;
 	private PreparedStatement changeIdStmt;
 	private PreparedStatement getDocumentCountStmt;
@@ -37,6 +38,7 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 			statement.close();
 			addDocumentStmt = connection.prepareStatement("insert into documents (id, file, title, content) values (? + 1, ?, ?, ?)");
 			retrieveDocumentStmt = connection.prepareStatement("select file, title, content from documents where id=? + 1");
+			retrieveDocumentMetaStmt = connection.prepareStatement("select file, title from documents where id=? + 1");
 			removeDocumentStmt = connection.prepareStatement("delete from documents where id=? + 1");
 			changeIdStmt = connection.prepareStatement("update documents set id=? + 1 where id=? + 1");
 			getDocumentCountStmt = connection.prepareStatement("select max(id) from documents");
@@ -93,15 +95,26 @@ public class SQLiteDocumentStorage implements DocumentStorage {
 	}
 
 	@Override
-	public Document restoreDocument(int id) {
+	public Document restoreDocument(int id, boolean withContent) {
 		try {
-			retrieveDocumentStmt.setInt(1, id);
-		
-			ResultSet rs = retrieveDocumentStmt.executeQuery();
-			if(rs.next()) {
-				GenericDocument result = new GenericDocument(Paths.get(rs.getString(1)), rs.getString(2), rs.getString(3));
-				rs.close();
-				return result;
+			if(withContent) {
+				retrieveDocumentStmt.setInt(1, id);
+				
+				ResultSet rs = retrieveDocumentStmt.executeQuery();
+				if(rs.next()) {
+					GenericDocument result = new GenericDocument(Paths.get(rs.getString(1)), rs.getString(2), rs.getString(3));
+					rs.close();
+					return result;
+				}
+			} else {
+				retrieveDocumentMetaStmt.setInt(1, id);
+				
+				ResultSet rs = retrieveDocumentMetaStmt.executeQuery();
+				if(rs.next()) {
+					GenericDocument result = new GenericDocument(Paths.get(rs.getString(1)), rs.getString(2), null);
+					rs.close();
+					return result;
+				}
 			}
 		} catch (SQLException e) {
 			log.warning("Could not retrieve document with id=" + id + ".");

@@ -27,7 +27,7 @@ public class TestSQLite {
 		begin = System.currentTimeMillis();
 		id = 0;
 		for(int i = 0; i < articles.size(); i++) {
-			storage.restoreDocument(id++);
+			storage.restoreDocument(id++, true);
 		}
 		end = System.currentTimeMillis();
 		System.out.println("Reading articles from db: " + (end - begin) + " ms");

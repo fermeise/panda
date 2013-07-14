@@ -85,7 +85,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 				
 				final int maxDocumentId = storage.getMaxDocumentId();
 				for(int id = 0; id < maxDocumentId; id++) {
-					Document document = storage.restoreDocument(id);
+					Document document = storage.restoreDocument(id, true);
 					if(document != null) {
 						int newId = index.addDocument(document);
 						if(newId != id) {
@@ -103,12 +103,12 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	}
 	
 	@Override
-	public synchronized List<Document> query(Query query, int maxResultCount) {
+	public synchronized List<Document> query(Query query, int maxResultCount, boolean withContent) {
 		final List<ScoredDocument> queryResult = queryProcessor.query(query, maxResultCount);
 		
 		ArrayList<Document> documents = new ArrayList<Document>();
 		for(ScoredDocument scoredDocument: queryResult) {
-			documents.add(storage.restoreDocument(scoredDocument.getId()));
+			documents.add(storage.restoreDocument(scoredDocument.getId(), withContent));
 		}
 		return documents;
 	}

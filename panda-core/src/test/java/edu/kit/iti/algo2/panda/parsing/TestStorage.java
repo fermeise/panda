@@ -27,8 +27,8 @@ public class TestStorage {
 		storage.addDocument(2, freiburg);
 		storage.commitChanges();
 		
-		assertEquals(karlsruhe.getContent(), storage.restoreDocument(0).getContent());
-		assertEquals(freiburg.getContent(), storage.restoreDocument(2).getContent());
+		assertEquals(karlsruhe.getContent(), storage.restoreDocument(0, true).getContent());
+		assertEquals(freiburg.getContent(), storage.restoreDocument(2, true).getContent());
 		assertEquals(3, storage.getMaxDocumentId());
 		
 		storage.removeDocument(0);
@@ -37,7 +37,7 @@ public class TestStorage {
 		
 		storage.addDocument(0, kit);
 		storage.commitChanges();
-		assertEquals(kit.getContent(), storage.restoreDocument(0).getContent());
+		assertEquals(kit.getContent(), storage.restoreDocument(0, true).getContent());
 	}
 
 }

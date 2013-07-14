@@ -39,14 +39,18 @@ public class QueryModel extends AbstractListModel<String> {
 		final Query query = new Query(queryString);
 		
 		final Query newSuggestion = index.getSuggestion(query);
-		final List<Document> newDocuments = index.query(query, numberOfResults);
+		final List<Document> newDocuments = index.query(query, numberOfResults, snippetLength > 0);
 		final List<String> newResults = new ArrayList<String>();
 		if(newSuggestion != null) {
 			newResults.add("<html><font color=red>Did you mean: </font>" + newSuggestion.toString() + "</html>");
 		}
 		for(Document document: newDocuments) {
-			newResults.add("<html><h3>" + document.getTitle() + "</h3><p>" +
-					index.extractSnippet(document, query, snippetLength, true) + "</p></html>");
+			if(snippetLength > 0) {
+				newResults.add("<html><h3>" + document.getTitle() + "</h3><p>" +
+						index.extractSnippet(document, query, snippetLength, true) + "</p></html>");
+			} else {
+				newResults.add("<html><h3>" + document.getTitle() + "</h3></html>");
+			}
 		}
 		
 		int oldSize = results.size();

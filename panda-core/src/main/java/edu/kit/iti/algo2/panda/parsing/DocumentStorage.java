@@ -36,9 +36,11 @@ public interface DocumentStorage {
 	/**
 	 * Restore a document from the library.
 	 * @param id The id of the document to be restored.
+	 * @param withContent If this is set to false, no content is restored
+	 * from the storage.
 	 * @return The document.
 	 */
-	public Document restoreDocument(int id);
+	public Document restoreDocument(int id, boolean withContent);
 	
 	/**
 	 * @return the first unused document id. (often the last used document id + 1)

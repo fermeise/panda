@@ -10,9 +10,11 @@ public interface IndexFacade {
 	 * Query the index.
 	 * @param query The query to be executed.
 	 * @param maxResultCount The maximum number of results to be returned.
+	 * @param withContent If this is set to false, no content is restored
+	 * from the storage.
 	 * @return The documents matching the query sorted by relevance.
 	 */
-	public List<Document> query(Query query, int maxResultCount);
+	public List<Document> query(Query query, int maxResultCount, boolean withContent);
 	
 	/**
 	 * Generate a snippet for a document returned by a query.

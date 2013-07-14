@@ -22,7 +22,7 @@ public class QueryFiles {
 		String queryString = scanner.nextLine();
 		while(queryString != "") {
 			Query query = new Query(queryString);
-			List<Document> result = facade.query(query, 10);
+			List<Document> result = facade.query(query, 10, true);
 			for(int i = 0; i < result.size(); i++) {
 				Document document = result.get(i);
 				System.out.println((i + 1) + ". " + document.getFile().toString());
