@@ -186,9 +186,9 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	@Override
 	public void signalInitialUpdateComplete() {
 		synchronized(this) {
-			if(!index.isScored()) {
-				updateStatus("Indexing completed.");
+			if(!index.isScored() && index.getDocumentCount() > 0) {
 				index.initialScoring();
+				updateStatus("Indexing completed.");
 				indexChanged = true;
 			}
 		}
