@@ -40,6 +40,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	private FileSystemWatcher fileWatcher;
 	private InvertedIndex index;
 	private QueryProcessor queryProcessor;
+	private boolean	indexChanged;
 	
 	public IndexManager(String storagePath, List<Path> documentPaths) {
 		documentLibraryFile = new File(storagePath + ".db");
@@ -62,6 +63,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 			this.index = new InvertedIndex();
 		}
 		this.queryProcessor = new QueryProcessor(index);
+		this.indexChanged = false;
 		
 		fileWatcher.start();
 	}
@@ -87,6 +89,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 				index.initialScoring();
 				
 				updateStatus("Index rebuild completed.");
+				indexChanged = true;
 			}
 		}
 	}
@@ -110,14 +113,16 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	@Override
 	public void close() {
 		fileWatcher.stop();
-		updateStatus("Saving index to disk...");
-		try {
-			storage.commitChanges();
-			fileWatcher.saveToFile(fileSystemFile);
-			index.saveToFile(documentIndexFile);
-			log.info("Success.");
-		} catch(IOException e) {
-			log.severe("Error while saving to disk.");
+		if(indexChanged) {
+			updateStatus("Saving index to disk...");
+			try {
+				storage.commitChanges();
+				fileWatcher.saveToFile(fileSystemFile);
+				index.saveToFile(documentIndexFile);
+				log.info("Success.");
+			} catch(IOException e) {
+				log.severe("Error while saving to disk.");
+			}
 		}
 	}
 	
@@ -150,6 +155,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 					updateStatus("Added document: " + path.toString());
 					int id = index.addDocument(document);
 					storage.addDocument(id, document);
+					indexChanged = true;
 					return id;
 				}
 			}
@@ -164,6 +170,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 		updateStatus("Removed document: " + path.toString());
 		index.removeDocument(documentId);
 		storage.removeDocument(documentId);
+		indexChanged = true;
 	}
 
 	@Override
@@ -172,6 +179,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 			if(!index.isScored()) {
 				updateStatus("Indexing completed.");
 				index.initialScoring();
+				indexChanged = true;
 			}
 		}
 		synchronized(fileWatcher) {
