@@ -11,23 +11,21 @@ import javax.swing.text.View;
 public class ResultRenderer extends DefaultListCellRenderer {
 	private static final long serialVersionUID = -4461696202264213887L;
 	
-	public Dimension getPreferredSize(String html, boolean width, int prefSize) {
-		setText(html);
+	public void setWidthTo(Component parent) {
+		int preferredWidth = parent.getWidth();
 		View view = (View) getClientProperty(BasicHTML.propertyKey);
-		view.setSize(width?prefSize:0,width?0:prefSize);
+		view.setSize(preferredWidth, 0);
 		
-		float w = view.getPreferredSpan(View.X_AXIS);
-		float h = view.getPreferredSpan(View.Y_AXIS);
+		int preferredHeight = (int) Math.ceil(view.getPreferredSpan(View.Y_AXIS));
 		
-		return new java.awt.Dimension((int) Math.ceil(w), (int) Math.ceil(h));
+		setPreferredSize(new Dimension(preferredWidth, preferredHeight));
 	}
+	
 	@Override
-	public Component getListCellRendererComponent(JList<? extends Object> list,
+	public Component getListCellRendererComponent(final JList<? extends Object> list,
 			Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-		if (value instanceof String) {
-			this.setPreferredSize(getPreferredSize((String)value, true, list.getWidth()));
-		}
+		setWidthTo(list);
 		return this;
 	}
 
