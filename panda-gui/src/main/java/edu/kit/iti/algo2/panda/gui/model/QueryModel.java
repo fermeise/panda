@@ -49,19 +49,20 @@ public class QueryModel extends AbstractListModel<String> {
 					index.extractSnippet(document, query, snippetLength, true) + "</p></html>");
 		}
 		
+		int oldSize = results.size();
+		int newSize = newResults.size();
+		
 		synchronized(this) {
-			int oldSize = results.size();
-			
 			this.suggestion = newSuggestion;
 			this.documents = newDocuments;
 			this.results = newResults;
+		}
 			
-			if (oldSize > 0) {
-				this.fireIntervalRemoved(this, 0, oldSize - 1);
-			}
-			if (!results.isEmpty()) {
-				this.fireIntervalAdded(this, 0, results.size() - 1);
-			}
+		if (oldSize > 0) {
+			this.fireIntervalRemoved(this, 0, oldSize - 1);
+		}
+		if (newSize > 0) {
+			this.fireIntervalAdded(this, 0, newSize - 1);
 		}
 	}
 

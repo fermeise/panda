@@ -12,7 +12,7 @@ public class ResultRenderer extends DefaultListCellRenderer {
 	private static final long serialVersionUID = -4461696202264213887L;
 	
 	public void setWidthTo(Component parent) {
-		int preferredWidth = parent.getWidth();
+		int preferredWidth = parent.getWidth() - 20;
 		View view = (View) getClientProperty(BasicHTML.propertyKey);
 		if(view != null) {
 			view.setSize(preferredWidth, 0);
