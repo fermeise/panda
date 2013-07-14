@@ -41,7 +41,7 @@ public class ResultPanel extends JPanel {
 		searchResult.setBorder(BorderFactory.createTitledBorder("Result:"));
 		searchResult.setCellRenderer(new ResultRenderer());
 		searchResult.addMouseListener(resultMouseListener);
-		searchResult.setPreferredSize(new Dimension(600, 0));
+		searchResult.setPreferredSize(new Dimension(600, 500));
 		
 		searchResultWrapper.setViewportView(searchResult);
 		searchResultWrapper.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
