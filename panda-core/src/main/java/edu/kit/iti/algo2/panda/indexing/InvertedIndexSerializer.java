@@ -11,12 +11,20 @@ import java.util.Map.Entry;
 import edu.kit.iti.algo2.panda.util.ObjectStringInputStream;
 
 public class InvertedIndexSerializer {
-	private static final String indexFilePrefix = "%PND-0.3%";
+	private static final String indexFilePrefix = "%PND-0.3i%";
+	private static final String indexFilePrefixShorts = "%PND-0.3s%";
 	
 	public static void toStream(InvertedIndex index, OutputStream outputStream) throws IOException {
 		ObjectOutputStream stream = new ObjectOutputStream(outputStream);
 		
-		stream.writeChars(indexFilePrefix);
+		boolean useShorts = index.maxDocumentId <= Short.MAX_VALUE;
+		
+		if(useShorts) {
+			stream.writeChars(indexFilePrefixShorts);
+		} else {
+			stream.writeChars(indexFilePrefix);
+		}
+		
 		stream.writeInt(index.maxDocumentId);
 		stream.writeLong(index.totalDocumentLength);
 		stream.writeBoolean(index.calculatedInitialScoring);
@@ -39,7 +47,11 @@ public class InvertedIndexSerializer {
 			stream.writeInt(documentCount);
 			int offset = 0;
 			for(int i = 0; i < documentCount; i++) {
-				stream.writeInt(documents[i] - offset);
+				if(useShorts) {
+					stream.writeShort(documents[i] - offset);
+				} else {
+					stream.writeInt(documents[i] - offset);
+				}
 				stream.writeShort(scores[i]);
 				offset = documents[i];
 			}
@@ -50,7 +62,9 @@ public class InvertedIndexSerializer {
 	public static InvertedIndex fromStream(InputStream inputStream) throws IOException, ParseException {
 		ObjectStringInputStream stream = new ObjectStringInputStream(inputStream);
 		
-		if(!stream.readChars(indexFilePrefix.length()).equals(indexFilePrefix)) {
+		String prefix = stream.readChars(indexFilePrefix.length());
+		boolean useShorts = prefix.equals(indexFilePrefixShorts);
+		if(!useShorts && !prefix.equals(indexFilePrefix)) {
 			stream.close();
 			throw new ParseException("The file does not seem to be a correct panda index file " +
 					"or the version does not match.", 0);
@@ -77,7 +91,11 @@ public class InvertedIndexSerializer {
 				final int documentCount = stream.readInt();
 				int offset = 0;
 				for(int i = 0; i < documentCount; i++) {
-					offset += stream.readInt();
+					if(useShorts) {
+						offset += stream.readShort();
+					} else {
+						offset += stream.readInt();
+					}
 					final int score = stream.readShort();
 					list.add(offset, score);
 				}
