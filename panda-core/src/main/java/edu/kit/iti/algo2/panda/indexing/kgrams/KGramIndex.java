@@ -12,9 +12,18 @@ import java.util.Set;
  * Simple index on splits of length k.
  */
 public class KGramIndex {
+	private static int defaultK = 3;
+	
 	private final ArrayList<String> words;
 	private final HashMap<String, IntSet> index;
 	private final int k;
+	
+	/**
+	 * Creates an empty data structure for indexing 3-grams
+	 */
+	public KGramIndex() {
+		this(defaultK);
+	}
 	
 	/**
 	 * Creates an empty data structure for indexing k-grams
@@ -26,7 +35,7 @@ public class KGramIndex {
 		this.index = new HashMap<>();
 		this.k = k;
 	}
-	
+
 	/**
 	 * Adds and indexes all words from <code>other</code>.
 	 * 
@@ -74,6 +83,13 @@ public class KGramIndex {
 	 */
 	public Set<String> getKeys() {
 		return this.index.keySet();
+	}
+	
+	/**
+	 * @return The length of the k-grams.
+	 */
+	public int getK() {
+		return k;
 	}
 	
 	/**

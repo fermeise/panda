@@ -2,16 +2,11 @@
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
 import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
 import edu.kit.iti.algo2.panda.parsing.SQLiteDocumentStorage;
 
 public class TestSQLite {
-	@Test
-	@Ignore
-	public void testSQLitePerformance() throws IOException {
+	public static void main(String[] args) throws IOException {
 		long begin, end;
 		
 		begin = System.currentTimeMillis();

@@ -7,8 +7,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.kit.iti.algo2.panda.indexing.kgrams.KGramIndex;
+
 public class QueryProcessor {
-	private static Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
+	private static final int maxEditDistance = 2;
+	private static final Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
 	private DocumentIndex index;
 	
 	public QueryProcessor(DocumentIndex index) {
@@ -108,6 +111,45 @@ public class QueryProcessor {
 		}
 		
 		return removeUnprintableCharacters(result).replace("\r\n", " ").replace("\n", " ");
+	}
+	
+	/**
+	 * Find a search suggestion.
+	 * @param query The original query.
+	 * @return The suggested query or null if there is no significantly better.
+	 */
+	public Query getSuggestion(Query originalQuery) {
+		KGramIndex kgramIndex = index.getKGramIndex();
+		
+		boolean foundAlternative = false;
+		Query result = new Query();
+		
+		for(String word: originalQuery.getIncludedWords()) {
+			int distance = Math.min(maxEditDistance,
+					(word.length() - kgramIndex.getK()) / kgramIndex.getK());
+
+			String bestWord = word;
+			int bestScore = index.getTermFrequency(word) * 2;
+			
+			for(String altWord: kgramIndex.fuzzySearch(word, distance)) {
+				int altScore = index.getTermFrequency(altWord);
+				if(altScore > bestScore) {
+					bestWord = altWord;
+					bestScore = altScore;
+				}
+			}
+			
+			result.getIncludedWords().add(bestWord);
+			if(!bestWord.equals(word)) {
+				foundAlternative = true;
+			}
+		}
+		
+		for(String word: originalQuery.getExcludedWords()) {
+			result.getExcludedWords().add(word);
+		}
+		
+		return foundAlternative ? result : null;
 	}
 	
 	private String removeUnprintableCharacters(String str) {

@@ -111,6 +111,11 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 	}
 
 	@Override
+	public Query getSuggestion(Query originalQuery) {
+		return queryProcessor.getSuggestion(originalQuery);
+	}
+
+	@Override
 	public void close() {
 		fileWatcher.stop();
 		if(indexChanged) {

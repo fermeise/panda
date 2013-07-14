@@ -16,7 +16,8 @@ import edu.kit.iti.algo2.panda.gui.model.QueryModel;
 
 public class ResultPanel extends JPanel {
 	private static final long serialVersionUID = -8345079086452477714L;
-	
+
+	private SearchView parentView;
 	private final QueryModel model;
 	private final JList<String> searchResult = new JList<>();
 	private final JScrollPane searchResultWrapper = new JScrollPane();
@@ -25,13 +26,17 @@ public class ResultPanel extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(e.getClickCount() == 2) {
-				model.viewDocument(searchResult.getSelectedIndex());
+				String query = model.clickItem(searchResult.getSelectedIndex());
+				if(query != null) {
+					parentView.getSearchField().setText(query);
+				}
 			}
 		}
 	};
-	
-	public ResultPanel(QueryModel model) {
+
+	public ResultPanel(SearchView parent, QueryModel model) {
 		super(new BorderLayout());
+		this.parentView = parent;
 		this.model = model;
 		initComponents();
 	}

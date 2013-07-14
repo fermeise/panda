@@ -47,9 +47,13 @@ public class SearchView extends JFrame {
 	public SearchView(QueryModel model) {
 		super(TITLE);
 		this.model = model;
-		this.resultPanel = new ResultPanel(model);
+		this.resultPanel = new ResultPanel(this, model);
 		this.statusPanel = new StatusPanel(model);
 		initAndShowView();
+	}
+	
+	public JTextField getSearchField() {
+		return this.searchField;
 	}
 	
 	private void initAndShowView() {

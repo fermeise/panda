@@ -14,11 +14,13 @@ public class ResultRenderer extends DefaultListCellRenderer {
 	public void setWidthTo(Component parent) {
 		int preferredWidth = parent.getWidth();
 		View view = (View) getClientProperty(BasicHTML.propertyKey);
-		view.setSize(preferredWidth, 0);
-		
-		int preferredHeight = (int) Math.ceil(view.getPreferredSpan(View.Y_AXIS));
-		
-		setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+		if(view != null) {
+			view.setSize(preferredWidth, 0);
+
+			int preferredHeight = (int) Math.ceil(view.getPreferredSpan(View.Y_AXIS));
+			
+			setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+		}
 	}
 	
 	@Override

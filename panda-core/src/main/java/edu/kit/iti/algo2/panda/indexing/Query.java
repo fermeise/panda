@@ -8,11 +8,15 @@ public class Query {
 	
 	private final ArrayList<String> includedWords;
 	private final ArrayList<String> excludedWords;
-
-	public Query(String queryString) {
+	
+	public Query() {
 		this.includedWords = new ArrayList<String>();
 		this.excludedWords = new ArrayList<String>();
+	}
 
+	public Query(String queryString) {
+		this();
+		
 		int wordBegin = 0;
 		
 		for(int i = 0; i < queryString.length(); i++) {
@@ -55,5 +59,20 @@ public class Query {
 				}
 			}
 		}
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		for(String word: includedWords) {
+			sb.append(" ");
+			sb.append(word);
+		}
+		for(String word: excludedWords) {
+			sb.append(" -");
+			sb.append(word);
+		}
+		
+		return sb.length() == 0 ? "" : sb.substring(1);
 	}
 }

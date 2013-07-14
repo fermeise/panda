@@ -23,6 +23,13 @@ public interface IndexFacade {
 	 * @return The generated snippet.
 	 */
 	public String extractSnippet(Document document, Query query, int maxSnippetSize, boolean html);
+	
+	/**
+	 * Find a search suggestion.
+	 * @param query The original query.
+	 * @return The suggested query or null if there is no significantly better.
+	 */
+	public Query getSuggestion(Query originalQuery);
 
 	/**
 	 * Rebuilds the index explicitly, so the obsolete files are no longer in

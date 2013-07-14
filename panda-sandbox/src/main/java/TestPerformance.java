@@ -12,16 +12,12 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import edu.kit.iti.algo2.panda.indexing.InvertedIndex;
 import edu.kit.iti.algo2.panda.indexing.mock.WikipediaArticle;
 
 public class TestPerformance {
-	@Test
-	@Ignore
-	public void testPerformance() throws IOException {
+	public static void main(String[] args) throws IOException {
 		long begin, end;
 		
 		begin = System.currentTimeMillis();

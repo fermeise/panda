@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import edu.kit.iti.algo2.panda.indexing.kgrams.KGramIndex;
+
 public class InvertedIndex implements DocumentIndex {
 	protected static final int minimumWordLength = 2;
 	private static final int initialSpace = 16;
@@ -25,6 +27,8 @@ public class InvertedIndex implements DocumentIndex {
 	protected boolean calculatedInitialScoring;
 	protected int documentsAddedSinceScoring;
 	
+	protected KGramIndex kgramIndex;
+	
 	public InvertedIndex() {
 		this.invertedIndex = new HashMap<String, InvertedList>();
 		this.obsoleteDocuments = new TreeSet<Integer>();
@@ -33,6 +37,8 @@ public class InvertedIndex implements DocumentIndex {
 		this.maxDocumentId = 0;
 		this.calculatedInitialScoring = false;
 		this.documentsAddedSinceScoring = 0;
+		
+		this.kgramIndex = new KGramIndex();
 	}
 
 	public int addDocument(Document document) {
@@ -95,6 +101,9 @@ public class InvertedIndex implements DocumentIndex {
 		while(it.hasNext()) {
 			it.next().getValue().score(this);
 		}
+		
+		kgramIndex.addAllWords(getWords());
+		
 		calculatedInitialScoring = true;
 	}
 	
@@ -145,12 +154,28 @@ public class InvertedIndex implements DocumentIndex {
 		return 0;
 	}
 	
+	@Override
+	public int getTermFrequency(String word) {
+		final InvertedList list = invertedIndex.get(word);
+		if(list != null) {
+			return list.getDocumentCount();
+		}
+		return 0;
+	}
+
+	@Override
+	public KGramIndex getKGramIndex() {
+		return kgramIndex;
+	}
+	
 	public void saveToFile(File file) throws IOException {
 		InvertedIndexSerializer.toStream(this, new FileOutputStream(file));
 	}
 	
 	public static InvertedIndex loadFromFile(File file) throws IOException, ParseException {
-		return InvertedIndexSerializer.fromStream(new FileInputStream(file));
+		InvertedIndex result = InvertedIndexSerializer.fromStream(new FileInputStream(file));
+		result.kgramIndex.addAllWords(result.getWords());
+		return result;
 	}
 	
 	private InvertedList addToIndex(String word, int documentNumber) {
@@ -158,6 +183,9 @@ public class InvertedIndex implements DocumentIndex {
 		if(list == null) {
 			list = new InvertedList();
 			invertedIndex.put(word, list);
+			if(calculatedInitialScoring) {
+				kgramIndex.addWord(word);
+			}
 		}
 		list.add(documentNumber, 1);
 		return list;

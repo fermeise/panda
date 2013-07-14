@@ -2,6 +2,8 @@ package edu.kit.iti.algo2.panda.indexing;
 
 import java.util.Set;
 
+import edu.kit.iti.algo2.panda.indexing.kgrams.KGramIndex;
+
 /**
  * An index of documents. All indexed document can be identified using an
  * integer id. The ids start with 0.
@@ -48,9 +50,20 @@ public interface DocumentIndex {
 	public int getWordScore(String word);
 	
 	/**
+	 * @param word The word.
+	 * @return The number of occurrences of the word.
+	 */
+	public int getTermFrequency(String word);
+	
+	/**
 	 * Query the index for documents containing a certain word.
 	 * @param word The word in question.
 	 * @return All documents containing the word.
 	 */
 	public InvertedList queryWord(String word);
+
+	/**
+	 * @return The KGramIndex for the words used in the index.
+	 */
+	public KGramIndex getKGramIndex();
 }

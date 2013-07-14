@@ -22,43 +22,52 @@ public class QueryModel extends AbstractListModel<String> {
 	private final IndexFacade index;
 	private final HashMap<String, Path> fileViewer;
 	
+	private Query suggestion;
 	private List<Document> documents;
-	private List<String> snippets;
+	private List<String> results;
 	
 	public QueryModel(IndexFacade index, HashMap<String, Path> fileViewer) {
 		this.index = index;
 		this.fileViewer = fileViewer;
 		
+		this.suggestion = null;
 		this.documents = Collections.emptyList();
-		this.snippets = Collections.emptyList();
+		this.results = Collections.emptyList();
 	}
 	
 	public void setQuery(String queryString) {
 		final Query query = new Query(queryString);
+		
+		final Query newSuggestion = index.getSuggestion(query);
 		final List<Document> newDocuments = index.query(query, numberOfResults);
-		final List<String> newSnippets = new ArrayList<String>();
+		final List<String> newResults = new ArrayList<String>();
+		if(newSuggestion != null) {
+			newResults.add("<html><font color=red>Did you mean: </font>" + newSuggestion.toString() + "</html>");
+		}
 		for(Document document: newDocuments) {
-			newSnippets.add(index.extractSnippet(document, query, snippetLength, true));
+			newResults.add("<html><h3>" + document.getTitle() + "</h3><p>" +
+					index.extractSnippet(document, query, snippetLength, true) + "</p></html>");
 		}
 		
 		synchronized(this) {
-			int oldSize = documents.size();
+			int oldSize = results.size();
 			
+			this.suggestion = newSuggestion;
 			this.documents = newDocuments;
-			this.snippets = newSnippets;
+			this.results = newResults;
 			
 			if (oldSize > 0) {
 				this.fireIntervalRemoved(this, 0, oldSize - 1);
 			}
-			if (!newDocuments.isEmpty()) {
-				this.fireIntervalAdded(this, 0, newDocuments.size() - 1);
+			if (!results.isEmpty()) {
+				this.fireIntervalAdded(this, 0, results.size() - 1);
 			}
 		}
 	}
 
 	@Override
 	public synchronized int getSize() {
-		return this.documents.size();
+		return results.size();
 	}
 
 	@Override
@@ -67,7 +76,7 @@ public class QueryModel extends AbstractListModel<String> {
 			// Somehow the list model sometimes doesn't get length changes
 			return null;
 		}
-		return "<html><h3>" + documents.get(idx).getTitle() + "</h3><p>" + snippets.get(idx) + "</p></html>";
+		return results.get(idx);
 	}
 
 	public void close() {
@@ -82,7 +91,11 @@ public class QueryModel extends AbstractListModel<String> {
 		index.addStatusListener(statusListener);
 	}
 
-	public synchronized void viewDocument(int documentIndex) {
+	public synchronized String clickItem(int itemIndex) {
+		int documentIndex = (suggestion != null) ? itemIndex - 1 : itemIndex;
+		if(suggestion != null && itemIndex == 0) {
+			return suggestion.toString();
+		}
 		if(documentIndex >= 0 && documentIndex <= documents.size()) {
 			Document document = documents.get(documentIndex);
 			String filename = document.getFile().getFileName().toString();
@@ -96,5 +109,7 @@ public class QueryModel extends AbstractListModel<String> {
 				}
 			}
 		}
+		
+		return null;
 	}
 }
