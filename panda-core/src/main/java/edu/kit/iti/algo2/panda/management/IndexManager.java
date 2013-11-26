@@ -59,9 +59,7 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 			index = InvertedIndex.loadFromFile(documentIndexFile);
 		} catch (ParseException | IOException e) {
 		}
-		if(fileWatcher != null && index != null) {
-			updateStatus("Index with " + index.getDocumentCount() + " documents loaded successfully.");
-		} else {
+		if(fileWatcher == null || index == null) {
 			storage.reset();
 			this.fileWatcher = new FileSystemWatcher(this, documentPaths);
 			this.index = new InvertedIndex();
@@ -188,8 +186,10 @@ public class IndexManager implements IndexFacade, FileSystemHandler {
 		synchronized(this) {
 			if(!index.isScored() && index.getDocumentCount() > 0) {
 				index.initialScoring();
-				updateStatus("Indexing completed.");
+				updateStatus("Indexing completed. " + index.getDocumentCount() + " documents in index.");
 				indexChanged = true;
+			} else {
+				updateStatus("Index up to date. " + index.getDocumentCount() + " documents in index.");
 			}
 		}
 		synchronized(fileWatcher) {

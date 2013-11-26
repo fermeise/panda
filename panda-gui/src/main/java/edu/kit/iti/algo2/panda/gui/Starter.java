@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import edu.kit.iti.algo2.panda.files.FileSystemWatcher;
 import edu.kit.iti.algo2.panda.gui.model.AsyncQueryModel;
 import edu.kit.iti.algo2.panda.gui.model.QueryModel;
 import edu.kit.iti.algo2.panda.gui.view.SearchView;
@@ -61,6 +62,7 @@ public class Starter implements Runnable {
 		QueryProcessor.maxEditDistance = Integer.parseInt(properties.getProperty("max_edit_distance", "2"));
 		QueryModel.numberOfResults = Integer.parseInt(properties.getProperty("number_of_results", "20"));
 		QueryModel.snippetLength = Integer.parseInt(properties.getProperty("snippet_length", "300"));
+		FileSystemWatcher.liveWatching = Integer.parseInt(properties.getProperty("live_indexing", "1")) > 0;
 		
 		final IndexManager manager = new IndexManager(libraryPath, paths);
 		

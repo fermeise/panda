@@ -39,6 +39,7 @@ import edu.kit.iti.algo2.panda.util.ObjectStringInputStream;
  */
 public class FileSystemWatcher implements Runnable {
 	private static final String filePrefix = "%PND-FM-0.2%";
+	public static boolean liveWatching = true;
 	
 	private final FileSystemHandler handler;
 	private final ArrayList<Path> directories;
@@ -92,12 +93,14 @@ public class FileSystemWatcher implements Runnable {
 		}
 		watchThread = null;
 		
-		try {
-			watcher.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(watcher != null) {
+			try {
+				watcher.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			watcher = null;
 		}
-		watcher = null;
 		watchKeys.clear();
 	}
 	
@@ -116,10 +119,12 @@ public class FileSystemWatcher implements Runnable {
 	@Override
 	public void run() {
 		try {
-			try {
-				watcher = FileSystems.getDefault().newWatchService();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if(liveWatching) {
+				try {
+					watcher = FileSystems.getDefault().newWatchService();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			
 			synchronized(this) {
