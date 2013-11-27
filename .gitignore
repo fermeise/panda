@@ -6,3 +6,4 @@ wikipedia-sentences.csv
 *.db
 *.pnd
 *.pfs
+config.properties
